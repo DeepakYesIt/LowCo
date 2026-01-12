@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_120sdp"
+    android:layout_margin="@dimen/_10sdp"
+    android:elevation="@dimen/_400sdp"
+    app:cardCornerRadius="@dimen/_10sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/CVForMainImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/tvProfile"
+                android:layout_width="@dimen/_75sdp"
+                android:layout_height="@dimen/_90sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/demo_user" />
+        </androidx.cardview.widget.CardView>
+
+
+        <TextView
+            android:id="@+id/tvAttorneyName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="Devon M. Thurtle Anderson"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintLeft_toRightOf="@+id/CVForMainImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTypeofAttorney"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:fontFamily="@font/lexend_deca"
+            android:text="Bussines Attorney"
+            android:textColor="#424242"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintLeft_toRightOf="@+id/CVForMainImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvAttorneyName" />
+
+
+        <ImageView
+            android:id="@+id/imagenearlogo"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:src="@drawable/location_on_black"
+            app:layout_constraintLeft_toRightOf="@id/CVForMainImage"
+            app:layout_constraintTop_toBottomOf="@id/tvTypeofAttorney" />
+
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_width="@dimen/_175sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_2sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:fontFamily="@font/lexend_deca"
+            android:text="Seattle, WA"
+            android:maxLines="3"
+            android:textColor="#424242"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintLeft_toRightOf="@id/imagenearlogo"
+            app:layout_constraintTop_toBottomOf="@+id/tvTypeofAttorney" />
+
+
+
+        <ImageView
+            android:id="@+id/imagenearAwaylogo"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:src="@drawable/location_away"
+            app:layout_constraintLeft_toRightOf="@id/CVForMainImage"
+            app:layout_constraintTop_toBottomOf="@id/tvAddress" />
+
+        <TextView
+            android:id="@+id/tvDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_2sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:fontFamily="@font/lexend_deca"
+            android:text="500 meters away"
+            android:textColor="#424242"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintLeft_toRightOf="@id/imagenearAwaylogo"
+            app:layout_constraintTop_toBottomOf="@+id/tvAddress" />
+
+        <TextView
+            android:id="@+id/btViewProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="View Profile"
+            android:textColor="#2196F3"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintLeft_toRightOf="@+id/CVForMainImage"
+            app:layout_constraintTop_toBottomOf="@+id/imagenearAwaylogo" />
+
+
+        <TextView
+            android:id="@+id/btnConnect"
+            android:layout_width="@dimen/_55sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_14sdp"
+            android:background="@drawable/orange_button_identity"
+            android:fontFamily="@font/montserrat_semibold"
+            android:paddingLeft="@dimen/_7sdp"
+            android:paddingTop="@dimen/_3sdp"
+            android:paddingRight="@dimen/_7sdp"
+            android:paddingBottom="@dimen/_3sdp"
+            android:text="Connect"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_9ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imagenearlogo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

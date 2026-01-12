@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_10sdp"
+    android:layout_marginBottom="@dimen/_20sdp"
+    android:background="@drawable/credit_shape_bg">
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/CVForMainImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_13sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/tvProfile"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_85sdp"
+            android:scaleType="fitXY"
+            android:src="@drawable/pic1" />
+    </androidx.cardview.widget.CardView>
+
+
+    <TextView
+        android:id="@+id/tvConsumerName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_15ssp"
+        android:layout_marginTop="@dimen/_13sdp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Stacia R Hofmann"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_11ssp"
+        app:layout_constraintStart_toEndOf="@+id/CVForMainImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvNeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:fontFamily="@font/lexend_deca"
+        android:text=""
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintStart_toEndOf="@+id/CVForMainImage"
+        app:layout_constraintTop_toBottomOf="@+id/tvConsumerName" />
+
+    <ImageView
+        android:id="@+id/awayPic"
+        android:layout_width="@dimen/_13sdp"
+        android:layout_height="@dimen/_13sdp"
+        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:src="@drawable/location_away"
+        app:layout_constraintStart_toEndOf="@+id/CVForMainImage"
+        app:layout_constraintTop_toBottomOf="@+id/tvNeed" />
+
+    <TextView
+        android:id="@+id/tvDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:fontFamily="@font/lexend_deca"
+        android:text="200 meters away"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintStart_toEndOf="@+id/awayPic"
+        app:layout_constraintTop_toBottomOf="@+id/tvNeed" />
+
+
+    <TextView
+        android:id="@+id/btAccept"
+        android:layout_width="@dimen/_55sdp"
+        android:layout_height="@dimen/_22sdp"
+        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:background="@drawable/orange_button_identity"
+        android:fontFamily="@font/montserrat_semibold"
+        android:gravity="center"
+        android:padding="@dimen/_2sdp"
+        android:text="Accept"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_10ssp"
+        app:layout_constraintStart_toEndOf="@id/CVForMainImage"
+        app:layout_constraintTop_toBottomOf="@id/awayPic" />
+
+    <TextView
+        android:id="@+id/btDecline"
+        android:layout_width="@dimen/_55sdp"
+        android:layout_height="@dimen/_22sdp"
+        android:layout_marginLeft="@dimen/_25sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:background="@drawable/orange_button_identity"
+        android:fontFamily="@font/montserrat_semibold"
+        android:gravity="center"
+        android:padding="@dimen/_2sdp"
+        android:text="Decline"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_9ssp"
+        app:layout_constraintStart_toEndOf="@id/btAccept"
+        app:layout_constraintTop_toBottomOf="@id/awayPic" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
