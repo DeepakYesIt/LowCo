@@ -17,6 +17,7 @@ import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.widget.Toast
@@ -51,8 +52,13 @@ import com.facebook.GraphRequest
 import com.facebook.HttpMethod
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.withpersona.sdk2.inquiry.Environment
+import com.withpersona.sdk2.inquiry.Fields
+import com.withpersona.sdk2.inquiry.Inquiry
+import com.withpersona.sdk2.inquiry.InquiryResponse
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -65,6 +71,7 @@ class SignUpFragment : BaseFragment(), View.OnClickListener {
     private lateinit var signViewModel: SignUpViewModel
     var type:String = ""
     private lateinit var callbackManager: CallbackManager
+    private lateinit var getInquiryResult: ActivityResultLauncher<Inquiry>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,6 +79,27 @@ class SignUpFragment : BaseFragment(), View.OnClickListener {
     ): View {
         binding =
             FragmentSignUpBinding.inflate(LayoutInflater.from(requireActivity()), container, false)
+
+
+        getInquiryResult = registerForActivityResult(Inquiry.Contract()) { result ->
+            when (result) {
+                is InquiryResponse.Complete -> {
+                    // User identity verification completed successfully
+//                    identityVerified = 1
+                    Toast.makeText(requireContext(), "Verified Successfully!", Toast.LENGTH_SHORT).show()
+                }
+                is InquiryResponse.Cancel -> {
+                    // User abandoned the verification process
+                    Toast.makeText(requireContext(),"Request Cancelled",Toast.LENGTH_LONG).show()
+                }
+                is InquiryResponse.Error -> {
+                    // Error occurred during identity verification
+                    Toast.makeText(requireContext(),"Error Occurred, Try Again",Toast.LENGTH_LONG).show()
+
+                }
+            }
+        }
+
         return binding.root
     }
 
@@ -159,11 +187,39 @@ class SignUpFragment : BaseFragment(), View.OnClickListener {
             initFacebook()
         }
 
+
+        if (sessionManager.getUserType() == AppConstant.ATTORNEY) {
+            binding.btnClaim.visibility = View.VISIBLE
+        } else {
+            binding.btnClaim.visibility = View.GONE
+        }
+
+
+        binding.btnClaim.setOnClickListener {
+            launchVerifyIdentity()
+        }
+
+
         signInButtonClickable()
         termAndConditionClickable()
 
     }
 
+    private fun launchVerifyIdentity(){
+        val TEMPLATE_ID = "itmpl_yEu1QvFA5fJ1zZ9RbUo1yroGahx2"
+        val inquiry = Inquiry.fromTemplate(TEMPLATE_ID)
+            .environment(Environment.SANDBOX) // Use Environment.PRODUCTION for live verification
+            .referenceId("1") // Link the inquiry to a specific user
+            .fields(
+                Fields.Builder()
+                    .build()
+            )
+            .locale(Locale.getDefault().language)
+            .build()
+
+        getInquiryResult.launch(inquiry)
+
+    }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

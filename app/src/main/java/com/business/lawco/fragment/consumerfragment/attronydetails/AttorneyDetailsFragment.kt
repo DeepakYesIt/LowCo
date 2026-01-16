@@ -1,12 +1,16 @@
 package com.business.lawco.fragment.consumerfragment.attronydetails
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +21,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -39,14 +45,18 @@ import com.business.lawco.databinding.FragmentAttorneyDetailsBinding
 import com.business.lawco.model.consumer.AttorneyProfile
 import com.business.lawco.networkModel.homeScreen.consumer.ConsumerHomeScreenViewModel
 import com.business.lawco.utility.AppConstant
+import com.business.lawco.utility.OnItemSelectListener
 import com.business.lawco.utility.PermissionUtils
 import com.business.lawco.utility.ValidationData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 
 @AndroidEntryPoint
-class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnClickListener{
+class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnClickListener,OnItemSelectListener{
 
     lateinit var binding: FragmentAttorneyDetailsBinding
 
@@ -60,6 +70,59 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
     private var attorneyId : String = ""
     var phone :String = ""
     var attorneyDetail: AttorneyProfile?=null
+    val uriList = mutableListOf<Uri>()
+    private lateinit var imageAdapter: ImageUploadAdapter
+    private lateinit var rcyData: RecyclerView
+
+
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+        if (result.resultCode != Activity.RESULT_OK || result.data == null) return@registerForActivityResult
+
+        val data = result.data
+        val maxFiles = 5
+        val maxSize = 10 * 1024 * 1024 // 10 MB
+
+        // Handle multiple files
+        data?.clipData?.let { clip ->
+            for (i in 0 until clip.itemCount) {
+                if (uriList.size >= maxFiles) {
+                    Toast.makeText(requireContext(), "Maximum 5 files allowed", Toast.LENGTH_SHORT).show()
+                    break
+                }
+                val uri = clip.getItemAt(i).uri
+                if (isFileSizeValid(uri, maxSize)) {
+                    if (!uriList.contains(uri)) {
+                        uriList.add(uri)
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "File exceeds 10 MB", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        // Handle single file
+        data?.data?.let { uri ->
+            if (uriList.size >= maxFiles) {
+                Toast.makeText(requireContext(), "Maximum 5 files allowed", Toast.LENGTH_SHORT).show()
+                return@registerForActivityResult
+            }
+            if (isFileSizeValid(uri, maxSize)) {
+                if (!uriList.contains(uri)) {
+                    uriList.add(uri)
+                }
+            } else {
+                Toast.makeText(requireContext(), "File exceeds 10 MB", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Logs
+        uriList.forEach { Log.e("uri", "****** $it") }
+
+        // Recycler visibility
+        rcyData.visibility = if (uriList.isNotEmpty()) View.VISIBLE else View.GONE
+        imageAdapter.updateData(uriList)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,8 +141,8 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
-
         initView()
+
         return binding.root
     }
 
@@ -110,9 +173,9 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
         requestSent = attorneyDetail?.request!!
         phone = attorneyDetail?.phone.toString()
 
-        if (attorneyDetail!!.profile_picture_url!=null){
+        if (attorneyDetail?.profile_picture_url!=null){
             Glide.with(requireActivity())
-                .load(/*AppConstant.BASE_URL +*/ attorneyDetail?.profile_picture_url)
+                .load( attorneyDetail?.profile_picture_url)
                 .placeholder(R.drawable.demo_user) // jab tak image load ho rahi hai
                 .error(R.drawable.demo_user)
                 .into(binding.tvProfile)
@@ -132,6 +195,7 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
             gMap?.animateCamera(CameraUpdateFactory.zoomIn())
             Log.e("******","ZoomIn")
         }
+
         binding.zoomOut.setOnClickListener {
             gMap?.animateCamera(CameraUpdateFactory.zoomOut())
             Log.e("******","ZoomOut")
@@ -155,36 +219,48 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
             binding.showActive.visibility = View.GONE
         }
 
-        if (requestSent == 1){
-            binding.btConnect.text = "Sent"
-            binding.btConnect.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.black
-                )
-            )
-            binding.btConnect.setBackgroundResource(R.drawable.sent_bg)
-        } else{
-            binding.btConnect.text = "Connect"
-            binding.btConnect.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white
-                )
-            )
-            binding.btConnect.setBackgroundResource(R.drawable.orange_button_identity)
-        }
-
+        viewDetail()
 
         binding.btnRequest.setOnClickListener {
             showView()
         }
 
+
     }
+
+    private fun viewDetail(){
+            binding.btConnect.visibility = View.VISIBLE
+            if (requestSent == 1){
+                binding.layRequest.visibility = View.VISIBLE
+                binding.btConnect.text = "Requested"
+            } else{
+                binding.layRequest.visibility = View.GONE
+                binding.btConnect.text = "Connect"
+            }
+
+    }
+
+    /**
+     * Check if the selected file size is less than maxSize
+     */
+    private fun isFileSizeValid(uri: Uri, maxSize: Int): Boolean {
+        return try {
+            val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                val sizeIndex = it.getColumnIndex(OpenableColumns.SIZE)
+                it.moveToFirst()
+                val size = it.getLong(sizeIndex)
+                size <= maxSize
+            } ?: false
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun showView(){
         val requestDialog = Dialog(requireContext())
         requestDialog.setContentView(R.layout.request_dialog)
-        requestDialog.setCancelable(false)
+        requestDialog.setCancelable(true)
         requestDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         val etCardNumber: EditText = requestDialog.findViewById(R.id.etCardNumber)
         val etSubject: EditText = requestDialog.findViewById(R.id.etSubject)
@@ -192,25 +268,44 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
         val tvUpload: TextView = requestDialog.findViewById(R.id.tvUpload)
         val btnCancel: TextView = requestDialog.findViewById(R.id.Cancel)
         val tvInfo: TextView = requestDialog.findViewById(R.id.tvInfo)
+        val tvDownload: TextView = requestDialog.findViewById(R.id.tvDownload)
         val rcyData: RecyclerView = requestDialog.findViewById(R.id.rcyData)
         val imgUpload: ImageView = requestDialog.findViewById(R.id.imgUpload)
+        val imgClose: ImageView = requestDialog.findViewById(R.id.imgClose)
         val btnShow: LinearLayout = requestDialog.findViewById(R.id.btnShow)
 
         imgUpload.visibility = View.GONE
         tvInfo.visibility = View.GONE
         btnShow.visibility = View.GONE
-        tvUpload.visibility = View.GONE
+        tvUpload.visibility = View.VISIBLE
+        tvDownload.visibility = View.VISIBLE
 
         etCardNumber.isEnabled = false
         etSubject.isEnabled = false
 
-        rcyData.adapter= ImageShowAdapter(requireContext())
+        attorneyDetail?.subject?.let {
+            etSubject.setText(it)
+        }
+
+        attorneyDetail?.description?.let {
+            etCardNumber.setText(it)
+        }
+
+        attorneyDetail?.documents?.let { list->
+            if (list.isNotEmpty()){
+                rcyData.adapter= ImageShowAdapter(requireContext(),list)
+            }
+        }
 
         btnYes.setOnClickListener {
             requestDialog.dismiss()
         }
 
         btnCancel.setOnClickListener {
+            requestDialog.dismiss()
+        }
+
+        imgClose.setOnClickListener {
             requestDialog.dismiss()
         }
 
@@ -235,6 +330,20 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
 
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun alertSend(){
+        val postDialog = Dialog(requireContext())
+        postDialog.setContentView(R.layout.alert_dialog_successful_sign_up)
+        postDialog.setCancelable(false)
+        val submit: TextView = postDialog.findViewById(R.id.btn_okay)
+        val tv2: TextView = postDialog.findViewById(R.id.tv2)
+        tv2.text="Your request has been submitted \nsuccessfully."
+        submit.setOnClickListener {
+            postDialog.dismiss()
+        }
+        postDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        postDialog.show()
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onClick(item: View?) {
@@ -312,48 +421,196 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
     }
 
     @SuppressLint("SetTextI18n")
-    private fun sendRequest(
+    private fun sendRequest(attorneyId: String, action: String, ) {
+        val requestDialog = Dialog(requireContext())
+        requestDialog.setContentView(R.layout.request_dialog)
+        requestDialog.setCancelable(true)
+        requestDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val etCardNumber: EditText = requestDialog.findViewById(R.id.etCardNumber)
+        val etSubject: EditText = requestDialog.findViewById(R.id.etSubject)
+        val btnYes: TextView = requestDialog.findViewById(R.id.yes)
+        val btnCancel: TextView = requestDialog.findViewById(R.id.Cancel)
+        rcyData = requestDialog.findViewById(R.id.rcyData)
+        val imgUpload: ImageView = requestDialog.findViewById(R.id.imgUpload)
+        val imgClose: ImageView = requestDialog.findViewById(R.id.imgClose)
+        uriList.clear()
+        imageAdapter=ImageUploadAdapter(uriList,requireContext(),this)
+        rcyData.adapter= imageAdapter
+
+
+
+
+        fun isValidation(): Boolean{
+            if (etSubject.text.toString().isEmpty()){
+                Toast.makeText(requireContext(),"Subject can't be empty.", Toast.LENGTH_SHORT).show()
+                return false
+            }else if (etCardNumber.text.toString().isEmpty()){
+                Toast.makeText(requireContext(),"Description can't be empty.", Toast.LENGTH_SHORT).show()
+                return false
+            }else if (uriList.isEmpty()){
+                Toast.makeText(requireContext(),"Documents can't be empty.", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            return true
+        }
+
+        btnYes.setOnClickListener {
+            if (isValidation()){
+                sendRequestAttrony(requestDialog,attorneyId,action,etSubject.text.toString(),etCardNumber.text.toString())
+            }
+
+        }
+
+        imgUpload.setOnClickListener {
+            openGallery("5")
+        }
+        imgClose.setOnClickListener {
+            requestDialog.dismiss()
+        }
+        btnCancel.setOnClickListener {
+            requestDialog.dismiss()
+        }
+        requestDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        requestDialog.show()
+    }
+
+
+
+    private fun sendRequestAttrony(
+        requestDialog: Dialog,
         attorneyId: String,
         action: String,
+        etSubject: String,
+        etCardNumber: String
     ) {
-       showMe()
+        Log.e("Request Power", action)
+        showMe()
         lifecycleScope.launch {
-            consumerHomeScreenViewModel.sendRequestToAttorney(attorneyId, action,
-                sessionManager.getUserLat(),
-                sessionManager.getUserLng())
+            val list = createMultipartFiles(uriList)
+            consumerHomeScreenViewModel.sendRequestToAttorneyWithDoc(attorneyId, action, sessionManager.getUserLat(), sessionManager.getUserLng(),etSubject,etCardNumber,list)
                 .observe(viewLifecycleOwner) { jsonObject ->
                     dismissMe()
                     val jsonObjectData = sessionManager.checkResponse(jsonObject)
                     if (jsonObjectData != null) {
-                        try {
+                        requestDialog.dismiss()
+                        val jsonObjectData = sessionManager.checkResponse(jsonObject)
+                        if (jsonObjectData != null) {
+                            try {
+                                if (action.toInt() == 1){
+                                    binding.btConnect.text = "Requested"
+                                    requestSent = 1
+                                } else{
+                                    binding.btConnect.text = "Connect"
+                                    requestSent = 0
+                                }
+                                // Get data object
+                                val dataObject = jsonObjectData.getAsJsonObject("data")
+                                attorneyDetail?.subject =
+                                    if (dataObject != null && dataObject.has("subject") && !dataObject.get("subject").isJsonNull)
+                                        dataObject.get("subject").asString
+                                    else
+                                        null
+                                attorneyDetail?.description =
+                                    if (dataObject != null && dataObject.has("description") && !dataObject.get("description").isJsonNull)
+                                        dataObject.get("description").asString
+                                    else
+                                        null
+                                val documentsList = mutableListOf<String>()
 
-                            if (action.toInt() == 1){
-                                binding.btConnect.text = "Sent"
-                                binding.btConnect.setTextColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.black
-                                    )
-                                )
-                                binding.btConnect.setBackgroundResource(R.drawable.sent_bg)
-                                requestSent = 1
-                            } else{
-                                binding.btConnect.text = "Connect"
-                                binding.btConnect.setTextColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.white
-                                    )
-                                )
-                                binding.btConnect.setBackgroundResource(R.drawable.orange_button_identity)
-                                requestSent = 0
+                                if (dataObject != null && dataObject.has("documents") && dataObject.get("documents").isJsonArray) {
+                                    dataObject.getAsJsonArray("documents").forEach {
+                                        if (!it.isJsonNull) {
+                                            documentsList.add(it.asString)
+                                        }
+                                    }
+                                }
+                                attorneyDetail?.documents = documentsList
+                                viewDetail()
+                                alertSend()
+                            } catch (e: Exception) {
+                                Log.d("@Error","***"+e.message)
                             }
-
-                        } catch (e: Exception) {
-                            Log.d("@Error","***"+e.message)
                         }
                     }
                 }
+        }
+    }
+
+
+
+    fun createMultipartFiles(uriList: MutableList<Uri>): List<MultipartBody.Part> {
+        val parts = mutableListOf<MultipartBody.Part>()
+
+        uriList.forEachIndexed { index, uri ->
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            val fileBytes = inputStream?.readBytes()
+            val fileName = getFileName(uri)
+            if (fileBytes != null && fileName != null) {
+                val requestFile = fileBytes.toRequestBody("application/octet-stream".toMediaTypeOrNull())
+                val part = MultipartBody.Part.createFormData("files[]", fileName, requestFile)
+                parts.add(part)
+            }
+        }
+
+        return parts
+    }
+
+    // Utility function to get file name from Uri
+    fun getFileName(uri: Uri): String? {
+        var name: String? = null
+        val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                name = it.getString(it.getColumnIndexOpenableColumnName())
+            }
+        }
+        return name
+    }
+
+    // Extension for cursor column name
+    fun Cursor.getColumnIndexOpenableColumnName(): Int = getColumnIndex(OpenableColumns.DISPLAY_NAME)
+
+
+
+
+    private fun openGallery(selectType: String,format :String ="image") {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Upload File")
+            .setMessage("Choose a file type to upload")
+            .setPositiveButton("Image") { _, _ ->
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.type = "image/*"
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                intent.putExtra("SELECT_TYPE", selectType) // <<----- parameter
+                imagePickerLauncher.launch(intent)
+            }
+            .setNegativeButton("Document") { _, _ ->
+                val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                    type = "*/*"
+                    putExtra(
+                        Intent.EXTRA_MIME_TYPES,
+                        arrayOf(
+                            "application/pdf",
+                            "application/msword", // .doc
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+                        )
+                    )
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                }
+                imagePickerLauncher.launch(intent)
+            }
+            .setNeutralButton("Cancel", null)
+            .show()
+    }
+
+    override fun itemSelect(position: Int?, status: String?, type: String?) {
+        uriList.removeAt(position?:0)
+        if (uriList.isNotEmpty()){
+            imageAdapter.updateData(uriList)
+            rcyData.visibility = View.VISIBLE
+        }else{
+            rcyData.visibility = View.GONE
         }
     }
 

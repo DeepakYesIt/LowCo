@@ -19,6 +19,9 @@ var longitude : String?,
 var distance : String?,
 var updated_at : String,
 var formatted_date : String,
+var subject : String?,
+var description : String?,
+var documents : MutableList<String>?,
 var attorney_area_of_practice : String?="",
 var formatted_time : String
 )

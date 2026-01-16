@@ -9,11 +9,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.location.Geocoder
-import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
@@ -34,21 +33,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.places.api.Places
-import com.google.gson.Gson
 import com.business.lawco.R
 import com.business.lawco.SessionManager
 import com.business.lawco.activity.consumer.ConsumerHomeActivity
 import com.business.lawco.adapter.ImageUploadAdapter
 import com.business.lawco.adapter.consumer.AttorneyListAdapter
-import com.business.lawco.adapter.consumer.AttorneySearchAdapter
 import com.business.lawco.adapter.consumer.CategoriesAdapter
 import com.business.lawco.base.BaseFragment
 import com.business.lawco.databinding.FragmentConsumerHomeBinding
@@ -61,9 +57,7 @@ import com.business.lawco.model.consumer.AttorneyProfile
 import com.business.lawco.model.consumer.CategoryModel
 import com.business.lawco.model.consumer.Data
 import com.business.lawco.networkModel.homeScreen.consumer.ConsumerHomeScreenViewModel
-import com.business.lawco.utility.AppConstant
 import com.business.lawco.utility.OnItemSelectListener
-import com.business.lawco.utility.PermissionUtils
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.common.api.Status
@@ -71,11 +65,17 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResult
 import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.libraries.places.api.Places
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.util.Locale
 
@@ -86,18 +86,15 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
     private var notificationStatus:Int=0
     private lateinit var adapterAttorneyList: AttorneyListAdapter
     private lateinit var imageAdapter: ImageUploadAdapter
-    private lateinit var attorneySearchAdapter: AttorneySearchAdapter
     private lateinit var sessionManager: SessionManager
     private lateinit var rcyData: RecyclerView
     private lateinit var consumerHomeScreenViewModel: ConsumerHomeScreenViewModel
     val uriList = mutableListOf<Uri>()
     private var selectId:MutableList<String> = ArrayList()
-
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var locationManager: LocationManager? = null
     private var latitude: String = "0"
     private var longitude: String = "0"
-
     private var tAG: String = "Location"
 
 
@@ -224,51 +221,6 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
             }
         })
 
-        attorneySearchAdapter = AttorneySearchAdapter(attorneyList, requireContext(),AppConstant.HOME)
-        binding.recyclerAttorneySearch.adapter = attorneySearchAdapter
-        binding.recyclerAttorneySearch.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-
-   /*     binding.EtSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-            override fun onTextChanged(searchText: CharSequence?,
-                p1: Int, p2: Int, p3: Int) {
-                if (!searchText.isNullOrEmpty()) {
-                    val filterList: ArrayList<AttorneyProfile> = arrayListOf()
-                    attorneyList.forEach { attorney ->
-                        val fullName = attorney.full_name
-                        val areaOfPractice = attorney.area_of_practice
-                        if (fullName.contains(searchText, ignoreCase = true) || areaOfPractice.contains(searchText, ignoreCase = true)) {
-                            filterList.add(attorney)
-                        }
-                    }
-                    if (filterList.isNotEmpty()){
-                        adapterAttorneyList.updateData(filterList)
-                        binding.RcvListOfAttorney.visibility = View.VISIBLE
-                        binding.textNoDataFound.visibility = View.GONE
-                    }else{
-                        binding.RcvListOfAttorney.visibility = View.GONE
-                        binding.textNoDataFound.visibility = View.VISIBLE
-                    }
-                } else {
-                    if (attorneyList.isNotEmpty()){
-                        adapterAttorneyList.updateData(attorneyList)
-                        binding.RcvListOfAttorney.visibility = View.VISIBLE
-                        binding.textNoDataFound.visibility = View.GONE
-                    }else{
-                        binding.RcvListOfAttorney.visibility = View.GONE
-                        binding.textNoDataFound.visibility = View.VISIBLE
-                    }
-                }
-
-
-            }
-
-            override fun afterTextChanged(editTextAttorneySearch: Editable?) {
-
-            }
-
-        })*/
         binding.EtSearch.addTextChangedListener(object : TextWatcher {
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -538,7 +490,6 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
                                     val json = Gson().toJson(practice)
                                     sessionManager.setFilterPracticeChecked(json)
                                     adapterAttorneyList.updateData(attorneyList)
-                                    attorneySearchAdapter.updateData(attorneyList, binding.cardViewforAttorneyPrevious, binding.EtSearch)
                                     binding.RcvListOfAttorney.visibility = View.VISIBLE
                                     binding.textNoDataFound.visibility = View.GONE
                                 }else{
@@ -560,14 +511,74 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
     }
     @SuppressLint("SetTextI18n")
     fun sendRequest(position: Int, attorneyId: String, action: String) {
-        Log.e("Request Power", action)
+        val requestDialog = Dialog(requireContext())
+        requestDialog.setContentView(R.layout.request_dialog)
+        requestDialog.setCancelable(true)
+        requestDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val etCardNumber: EditText = requestDialog.findViewById(R.id.etCardNumber)
+        val etSubject: EditText = requestDialog.findViewById(R.id.etSubject)
+        val btnYes: TextView = requestDialog.findViewById(R.id.yes)
+        val btnCancel: TextView = requestDialog.findViewById(R.id.Cancel)
+        rcyData = requestDialog.findViewById(R.id.rcyData)
+        val imgUpload: ImageView = requestDialog.findViewById(R.id.imgUpload)
+        val imgClose: ImageView = requestDialog.findViewById(R.id.imgClose)
+        uriList.clear()
+        imageAdapter=ImageUploadAdapter(uriList,requireContext(),this)
+        rcyData.adapter= imageAdapter
+
+        fun isValidation(): Boolean{
+            if (etSubject.text.toString().isEmpty()){
+                Toast.makeText(requireContext(),"Subject can't be empty.", Toast.LENGTH_SHORT).show()
+                return false
+            }else if (etCardNumber.text.toString().isEmpty()){
+                Toast.makeText(requireContext(),"Description can't be empty.", Toast.LENGTH_SHORT).show()
+                return false
+            }else if (uriList.isEmpty()){
+                Toast.makeText(requireContext(),"Documents can't be empty.", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            return true
+        }
+
+        btnYes.setOnClickListener {
+            if (isValidation()){
+               sendRequestAttrony(requestDialog,position,attorneyId,action,etSubject.text.toString(),etCardNumber.text.toString())
+            }
+
+        }
+
+        imgUpload.setOnClickListener {
+            openGallery("5")
+        }
+        imgClose.setOnClickListener {
+            requestDialog.dismiss()
+        }
+        btnCancel.setOnClickListener {
+            requestDialog.dismiss()
+        }
+        requestDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        requestDialog.show()
+    }
+
+
+    private fun sendRequestAttrony(
+        requestDialog: Dialog,
+        position: Int,
+        attorneyId: String,
+        action: String,
+        etSubject: String,
+        etCardNumber: String
+    ) {
+         Log.e("Request Power", action)
         showMe()
         lifecycleScope.launch {
-            consumerHomeScreenViewModel.sendRequestToAttorney(attorneyId, action, latitude, longitude)
+            val list = createMultipartFiles(uriList)
+            consumerHomeScreenViewModel.sendRequestToAttorneyWithDoc(attorneyId, action, latitude, longitude,etSubject,etCardNumber,list)
                 .observe(viewLifecycleOwner) { jsonObject ->
                     dismissMe()
                     val jsonObjectData = sessionManager.checkResponse(jsonObject)
                     if (jsonObjectData != null) {
+                        requestDialog.dismiss()
                         try {
                             val index = attorneyList.indexOfFirst { it.id == attorneyId.toLong() }
                             if (action.equals("0",true)){
@@ -581,45 +592,63 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
                                 attorneyList[index] = attorneyProfile
                                 Log.e("******","Not Connect")
                             }
-//                            adapterAttorneyList.updateData(attorneyList)
                             adapterAttorneyList.notifyItemChanged(position)
+                            alertSend()
                         } catch (e: Exception) {
                             Log.d("@Error","***"+e.message)
                         }
                     }
                 }
         }
-
-       /* val requestDialog = Dialog(requireContext())
-        requestDialog.setContentView(R.layout.request_dialog)
-        requestDialog.setCancelable(false)
-        requestDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        val etCardNumber: EditText = requestDialog.findViewById(R.id.etCardNumber)
-        val etSubject: EditText = requestDialog.findViewById(R.id.etSubject)
-        val btnYes: TextView = requestDialog.findViewById(R.id.yes)
-        val btnCancel: TextView = requestDialog.findViewById(R.id.Cancel)
-        rcyData = requestDialog.findViewById(R.id.rcyData)
-        val imgUpload: ImageView = requestDialog.findViewById(R.id.imgUpload)
-        uriList.clear()
-        imageAdapter=ImageUploadAdapter(uriList,requireContext(),this)
-        rcyData.adapter= imageAdapter
-        btnYes.setOnClickListener {
-            requestDialog.dismiss()
-        }
-
-        imgUpload.setOnClickListener {
-            openGallery("5")
-        }
-
-
-        btnCancel.setOnClickListener {
-            requestDialog.dismiss()
-        }
-
-        requestDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        requestDialog.show()*/
     }
 
+
+    fun createMultipartFiles(uriList: MutableList<Uri>): List<MultipartBody.Part> {
+        val parts = mutableListOf<MultipartBody.Part>()
+
+        uriList.forEachIndexed { index, uri ->
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            val fileBytes = inputStream?.readBytes()
+            val fileName = getFileName(uri)
+            if (fileBytes != null && fileName != null) {
+                val requestFile = fileBytes.toRequestBody("application/octet-stream".toMediaTypeOrNull())
+                val part = MultipartBody.Part.createFormData("files[]", fileName, requestFile)
+                parts.add(part)
+            }
+        }
+
+        return parts
+    }
+
+    // Utility function to get file name from Uri
+    fun getFileName(uri: Uri): String? {
+        var name: String? = null
+        val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                name = it.getString(it.getColumnIndexOpenableColumnName())
+            }
+        }
+        return name
+    }
+
+    // Extension for cursor column name
+    fun Cursor.getColumnIndexOpenableColumnName(): Int = getColumnIndex(OpenableColumns.DISPLAY_NAME)
+
+    @SuppressLint("SetTextI18n")
+    private fun alertSend(){
+        val postDialog = Dialog(requireContext())
+        postDialog.setContentView(R.layout.alert_dialog_successful_sign_up)
+        postDialog.setCancelable(false)
+        val submit: TextView = postDialog.findViewById(R.id.btn_okay)
+        val tv2: TextView = postDialog.findViewById(R.id.tv2)
+        tv2.text="Your request has been submitted \nsuccessfully."
+        submit.setOnClickListener {
+            postDialog.dismiss()
+        }
+        postDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        postDialog.show()
+    }
 
     private fun openGallery(selectType: String,format :String ="image") {
         AlertDialog.Builder(requireContext())
@@ -632,10 +661,17 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
                 intent.putExtra("SELECT_TYPE", selectType) // <<----- parameter
                 imagePickerLauncher.launch(intent)
             }
-            .setNegativeButton("PDF") { _, _ ->
+            .setNegativeButton("Document") { _, _ ->
                 val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
                     type = "*/*"
-                    putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/pdf", "image/*"))
+                    putExtra(
+                        Intent.EXTRA_MIME_TYPES,
+                        arrayOf(
+                            "application/pdf",
+                            "application/msword", // .doc
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+                        )
+                    )
                     addCategory(Intent.CATEGORY_OPENABLE)
                     putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                 }

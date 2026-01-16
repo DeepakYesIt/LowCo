@@ -11,11 +11,26 @@
                   <entry key="vectorAssetStep">
                     <value>
                       <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="clipartAsset">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="url" value="file:/C:/Users/YES%20IT%20Labs/AppData/Local/Android/Sdk/icons/material/materialicons/download/baseline_download_24.xml" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="crosh_bottom" />
-                            <entry key="sourceFile" value="C:\Users\YES IT Labs\Downloads\Group 1000007081.svg" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="baseline_download_24" />
+                            <entry key="sourceFile" value="C:\Users\YES IT Labs\Downloads\solar_user-check-broken.svg" />
                           </map>
                         </option>
                       </PersistentState>

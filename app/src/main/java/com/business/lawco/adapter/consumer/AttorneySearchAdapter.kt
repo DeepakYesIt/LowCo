@@ -73,4 +73,5 @@ class AttorneySearchAdapter(private var previousAttorneyList: List<AttorneyProfi
         this.etSearch = etSearch
         notifyDataSetChanged()
     }
+
 }

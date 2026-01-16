@@ -1,11 +1,19 @@
 package com.business.lawco.activity.attroney
 
 
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -28,6 +36,21 @@ class AttronyHomeActivity : AppCompatActivity() ,View.OnClickListener{
     lateinit var binding: ActivityHomeBinding
     lateinit var commonViewModel: CommonViewModel
     private var isDialogShown = false
+    private var downloadId: Long = 0
+
+
+    private val downloadReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+            Toast.makeText(
+                this@AttronyHomeActivity,
+                "Download Completed",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     private lateinit var sessionManager: SessionManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +66,20 @@ class AttronyHomeActivity : AppCompatActivity() ,View.OnClickListener{
         window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
 //        AuthObserverHelper.observeAuthEvents(this, AuthEventManager.authRequired)
         observeSessionExpiration()
+
+        // Register receiver
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            registerReceiver(
+                downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            )
+        }
     }
 
     private fun observeSessionExpiration() {
@@ -56,6 +93,7 @@ class AttronyHomeActivity : AppCompatActivity() ,View.OnClickListener{
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showSessionExpiredDialog(){
         val dialog= Dialog(this, R.style.BottomSheetDialog)
         dialog.setCancelable(false)
@@ -118,6 +156,7 @@ class AttronyHomeActivity : AppCompatActivity() ,View.OnClickListener{
                 findNavController(R.id.fragmentUserContainerView_main).navigate(R.id.attronyHomeFragment)
             }
             R.id.navigationlog ->{
+                sessionManager.setSelectType("Requested")
                 logResume()
                 findNavController(R.id.fragmentUserContainerView_main).navigate(R.id.logFragment)
             }
@@ -140,5 +179,6 @@ class AttronyHomeActivity : AppCompatActivity() ,View.OnClickListener{
         SessionManager(this).setUserLat("")
         SessionManager(this).setUserLng("")
         SessionManager(this).setFilterUserAddress("")
+        unregisterReceiver(downloadReceiver)
     }
 }

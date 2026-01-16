@@ -63,14 +63,14 @@ class RequestListAdapter(var datalist :  List<RequestData>, val requireActivity:
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val dataItem = datalist[position]
 
-        holder.binding.btAccept.setOnClickListener(){
+        holder.binding.btView.setOnClickListener(){
             listener?.onRequestAction(position,dataItem.request_id,"accepted")
         }
 
-        holder.binding.btDecline.setOnClickListener(){
+       /* holder.binding.btDecline.setOnClickListener(){
             listener?.onRequestAction(position,dataItem.request_id,"rejected")
         }
-
+*/
         holder.bind(dataItem,requireActivity)
     }
 

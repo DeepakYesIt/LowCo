@@ -12,6 +12,24 @@
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="25dp">
 
+    <ImageView
+        android:id="@+id/imgClose"
+        android:layout_width="@dimen/_20sdp"
+        android:visibility="gone"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_gravity="center|end"
+        android:background="@drawable/crossicon"
+        android:layout_height="@dimen/_20sdp"/>
+
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_gravity="center"
+        android:background="@drawable/log_out_vector"
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/tv_title"

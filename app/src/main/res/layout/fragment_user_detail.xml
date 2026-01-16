@@ -273,14 +273,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:background="@color/line" />
 
                 <RelativeLayout
                     android:id="@+id/layRequest"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_30sdp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_marginBottom="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_15sdp">
 
@@ -291,7 +291,7 @@
                         android:background="@drawable/orange_button_identity"
                         android:fontFamily="@font/lexend_deca"
                         android:gravity="center"
-                        android:text="View Request"
+                        android:text="View Details"
                         android:layout_centerInParent="true"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12sdp" />

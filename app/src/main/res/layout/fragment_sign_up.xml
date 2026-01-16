@@ -63,6 +63,22 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="MissingConstraints" />
 
+                    <TextView
+                        android:id="@+id/btnClaim"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/green_button_identity"
+                        android:fontFamily="@font/montserrat"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:paddingHorizontal="@dimen/_30sdp"
+                        android:paddingVertical="@dimen/_11sdp"
+                        android:drawableStart="@drawable/solar_user_check_broken"
+                        android:text="Claim My Profile"
+                        android:textColor="@color/white"
+                        android:drawablePadding="@dimen/_10sdp"
+                        android:textSize="@dimen/_12ssp" />
+
                     <RelativeLayout
                         android:id="@+id/rlDetailBox"
                         android:layout_width="match_parent"

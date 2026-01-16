@@ -1,12 +1,18 @@
 package com.business.lawco.activity.consumer
 
 import android.app.Dialog
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +37,22 @@ class ConsumerHomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var sessionManager: SessionManager
     private var isDialogShown = false
 
+    private var downloadId: Long = 0
+
+
+    private val downloadReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+            Toast.makeText(
+                this@ConsumerHomeActivity,
+                "Download Completed",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserHomeBinding.inflate(layoutInflater)
@@ -47,6 +69,22 @@ class ConsumerHomeActivity : AppCompatActivity(), View.OnClickListener {
         }
 //        AuthObserverHelper.observeAuthEvents(this, AuthEventManager.authRequired)
         observeSessionExpiration()
+
+        // Register receiver
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            registerReceiver(
+                downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            )
+        }
+
+
     }
 
     private fun observeSessionExpiration() {
@@ -122,6 +160,7 @@ class ConsumerHomeActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(item: View?) {
         when (item!!.id) {
             R.id.csnavigationconnection -> {
+                sessionManager.setSelectType("Requested")
                 binding.csimageconnection.setImageResource(R.drawable.connection_bottom1)
                 binding.csimageHome.setImageResource(R.drawable.home_bottom1)
                 binding.csimageProfile.setImageResource(R.drawable.profile_bottom)
@@ -162,13 +201,13 @@ class ConsumerHomeActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
         SessionManager(this).setUserLat("")
         SessionManager(this).setUserLng("")
         SessionManager(this).setFilterUserAddress("")
         SessionManager(this).setFilterPracticeChecked("")
+        unregisterReceiver(downloadReceiver)
     }
 }
 

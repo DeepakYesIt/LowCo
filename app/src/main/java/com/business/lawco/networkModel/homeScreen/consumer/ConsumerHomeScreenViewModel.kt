@@ -6,6 +6,7 @@ import com.google.gson.JsonObject
 import com.business.lawco.networkModel.BaseResponse
 import com.business.lawco.networkModel.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,6 +40,19 @@ class ConsumerHomeScreenViewModel @Inject constructor(private val consumerReposi
     ): SingleLiveEvent<BaseResponse<JsonObject>> {
         return consumerRepository.sendRequestToAttorney(attorneyId,
             action,latitude, longitude)
+    }
+
+    suspend fun sendRequestToAttorneyWithDoc(
+        attorneyId: String,
+        action: String,
+        latitude: String,
+        longitude: String,
+        etSubject: String,
+        etCardNumber: String,
+        uriList: List<MultipartBody.Part>
+    ): SingleLiveEvent<BaseResponse<JsonObject>> {
+        return consumerRepository.sendRequestToAttorneyWithDoc(attorneyId,
+            action,latitude, longitude,etSubject,etCardNumber,uriList)
     }
 
 

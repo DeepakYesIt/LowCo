@@ -17,6 +17,7 @@ import com.business.lawco.databinding.ListOfAttorneyItemBinding
 import com.business.lawco.model.consumer.AttorneyProfile
 import com.business.lawco.utility.AppConstant
 import com.business.lawco.utility.ValidationData
+import androidx.navigation.findNavController
 
 class AttorneyListAdapter(
     private var attorneyList: List<AttorneyProfile>,
@@ -42,8 +43,7 @@ class AttorneyListAdapter(
             binding.btOpenProfile.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putString(AppConstant.ATTORNEY_PROFILE, Gson().toJson(dataItem))
-                Navigation.findNavController(binding.root)
-                    .navigate(R.id.action_consumerHomeFragment_to_attorneyDetailsFragment, bundle)
+                it.findNavController().navigate(R.id.action_consumerHomeFragment_to_attorneyDetailsFragment, bundle)
             }
 
             binding.tvAttorneyName.text = dataItem.full_name
@@ -57,12 +57,6 @@ class AttorneyListAdapter(
                 binding.showActive.visibility = View.VISIBLE
             }else{
                 binding.showActive.visibility = View.INVISIBLE
-            }
-
-            if (dataItem.profile_picture_url!=null){
-                Glide.with(requireContext).load(dataItem.profile_picture_url).into(binding.ImageAttorney)
-            }else{
-                binding.ImageAttorney.setImageResource(R.drawable.demo_user)
             }
 
             if (dataItem.profile_picture_url!=null){
@@ -97,20 +91,20 @@ class AttorneyListAdapter(
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val dataItem = attorneyList[position]
 
-        if (dataItem.connected == 1) {
+       /* if (dataItem.connected == 1) {
             holder.binding.btnConnect.visibility = View.GONE
         } else {
             holder.binding.btnConnect.visibility = View.VISIBLE
-        }
+        }*/
 
         if (dataItem.request == 0) {
             holder.binding.btnConnect.text = "Connect"
-            holder.binding.btnConnect.setBackgroundResource(R.drawable.orange_button_identity)
-            holder.binding.btnConnect.setTextColor(getColor(requireContext, R.color.white))
+            /*holder.binding.btnConnect.setBackgroundResource(R.drawable.orange_button_identity)
+            holder.binding.btnConnect.setTextColor(getColor(requireContext, R.color.white))*/
         } else {
-            holder.binding.btnConnect.text = "Sent"
-            holder.binding.btnConnect.setBackgroundResource(R.drawable.sent_bg)
-            holder.binding.btnConnect.setTextColor(getColor(requireContext, R.color.black))
+            holder.binding.btnConnect.text = "Requested"
+           /* holder.binding.btnConnect.setBackgroundResource(R.drawable.sent_bg)
+            holder.binding.btnConnect.setTextColor(getColor(requireContext, R.color.black))*/
         }
 
         holder.binding.btnConnect.setOnClickListener {

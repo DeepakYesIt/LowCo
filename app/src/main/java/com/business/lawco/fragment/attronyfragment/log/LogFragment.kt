@@ -1,11 +1,14 @@
 package com.business.lawco.fragment.attronyfragment.log
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
@@ -13,11 +16,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -44,9 +52,14 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import com.business.lawco.adapter.ImageShowAdapter
+import com.business.lawco.model.RequestData
+import com.business.lawco.utility.OnItemSelectListener
 
 @AndroidEntryPoint
-class LogFragment : BaseFragment(), View.OnClickListener {
+class LogFragment : BaseFragment(), View.OnClickListener, OnItemSelectListener {
     lateinit var binding: FragmentLogBinding
     lateinit var sessionManager: SessionManager
     private lateinit var homeScreenViewModel: AttorneyHomeScreenViewModel
@@ -57,7 +70,10 @@ class LogFragment : BaseFragment(), View.OnClickListener {
     private var latitude: String = "0"
     private var longitude: String = "0"
     private var tAG: String = "Location"
+    private var lead:String="0"
+    private var requestList: ArrayList<RequestData> = arrayListOf()
 
+    private lateinit var adapterRequestList :AcceptedAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,24 +98,38 @@ class LogFragment : BaseFragment(), View.OnClickListener {
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-        binding.Accepted.setOnClickListener(this)
-        binding.Declined.setOnClickListener(this)
+        binding.layRequested.setOnClickListener(this)
+        binding.layAccepted.setOnClickListener(this)
+        binding.layDeclined.setOnClickListener(this)
         binding.arrowWhite.setOnClickListener(this)
+
         binding.logRefresh.setOnRefreshListener {
-            locationData()
+          getCredits()
         }
-        locationData()
+
+        if (sessionManager.getSelectType().equals("Requested")){
+            selectDataType("Requested")
+        }
+        if (sessionManager.getSelectType().equals("Accepted")){
+            selectDataType("Accepted")
+        }
+        if (sessionManager.getSelectType().equals("Declined")){
+            selectDataType("Declined")
+        }
+
+
     }
 
     override fun onClick(item: View?) {
         when (item!!.id) {
-            R.id.Accepted -> {
-                hideData(false)
-                showAcceptedList()
+            R.id.layRequested -> {
+                selectDataType("Requested")
             }
-            R.id.Declined -> {
-                hideData(false)
-                showDeclineList()
+            R.id.layAccepted -> {
+                selectDataType("Accepted")
+            }
+            R.id.layDeclined -> {
+                selectDataType("Declined")
             }
             R.id.arrowWhite -> {
                 findNavController().navigate(R.id.action_logFragment_to_homeFragment)
@@ -107,23 +137,61 @@ class LogFragment : BaseFragment(), View.OnClickListener {
         }
     }
 
-    // This function is used for show accepted Request List
-    private fun showAcceptedList() {
-        binding.deniedLine.visibility = View.GONE
-        binding.acceptLine.visibility = View.VISIBLE
-        binding.Accepted.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
-        binding.Declined.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+
+    private fun getCredits() {
+        lifecycleScope.launch {
+            homeScreenViewModel.getCredit().observe(viewLifecycleOwner) { jsonObject ->
+                val jsonObjectData = sessionManager.checkResponseHidemessage(jsonObject)
+                if (jsonObjectData != null) {
+                    try {
+                        lead=jsonObjectData["credit"].asInt.toString()
+                    } catch (e: Exception) {
+                        lead="0"
+                        Log.d("@Error","***"+e.message)
+                    }
+                }
+            }
+        }
         locationData()
     }
 
-    // This function is used for show denied Request List
-    private fun showDeclineList() {
-        binding.deniedLine.visibility = View.VISIBLE
-        binding.acceptLine.visibility = View.GONE
-        binding.Accepted.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
-        binding.Declined.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
-        locationData()
+    private fun selectDataType(selectType: String){
+        hideData(false)
+        sessionManager.setSelectType(selectType)
+        if (selectType.equals("Requested",true)){
+            binding.RequestedLine.visibility = View.VISIBLE
+            binding.deniedLine.visibility = View.GONE
+            binding.acceptLine.visibility = View.GONE
+            binding.Requested.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
+            binding.Accepted.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+            binding.Declined.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+        }
+        if (selectType.equals("Accepted",true)){
+            binding.RequestedLine.visibility = View.GONE
+            binding.deniedLine.visibility = View.GONE
+            binding.acceptLine.visibility = View.VISIBLE
+            binding.Accepted.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
+            binding.Declined.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+            binding.Requested.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+        }
+        if (selectType.equals("Declined",true)){
+            binding.RequestedLine.visibility = View.GONE
+            binding.deniedLine.visibility = View.VISIBLE
+            binding.acceptLine.visibility = View.GONE
+            binding.Accepted.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+            binding.Declined.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
+            binding.Requested.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+        }
+
+        if (!sessionManager.isNetworkAvailable()) {
+            sessionManager.alertErrorDialog(getString(R.string.no_internet))
+        } else {
+            getCredits()
+        }
+
+
     }
+
     override fun onResume() {
         super.onResume()
         val activity = requireActivity() as AttronyHomeActivity
@@ -265,10 +333,11 @@ class LogFragment : BaseFragment(), View.OnClickListener {
 
     private fun apiCall(){
         showMe()
-        val type = if (binding.acceptLine.visibility == View.VISIBLE){
-            "1"
-        }else{
-            "2"
+        val type = when {
+            binding.RequestedLine.isVisible -> "0"
+            binding.acceptLine.isVisible -> "1"
+            binding.deniedLine.isVisible -> "2"
+            else -> "0"
         }
         lifecycleScope.launch {
             homeScreenViewModel.getAllRequest(type, latitude, longitude)
@@ -281,8 +350,7 @@ class LogFragment : BaseFragment(), View.OnClickListener {
                             val requestData = Gson().fromJson(jsonObjectData, RequestListModel::class.java)
                             if (requestData.data!=null && requestData.data!!.isNotEmpty()){
                                 hideData(true)
-                                binding.requestListRecycleView.adapter = AcceptedAdapter(requestData.data!!, requireActivity(),type)
-                                binding.requestListRecycleView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                                showData(requestData.data!!,type)
                             }else{
                                 hideData(false)
                             }
@@ -297,6 +365,15 @@ class LogFragment : BaseFragment(), View.OnClickListener {
         }
 
     }
+
+    private fun showData(data: ArrayList<RequestData>, type: String) {
+        requestList.clear()
+        requestList.addAll(data)
+        adapterRequestList=AcceptedAdapter(requestList, requireActivity(),type,this)
+        binding.requestListRecycleView.adapter = adapterRequestList
+        binding.requestListRecycleView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+    }
+
     private fun hideData(status:Boolean){
         if (status){
             binding.requestListRecycleView.visibility = View.VISIBLE
@@ -306,4 +383,145 @@ class LogFragment : BaseFragment(), View.OnClickListener {
             binding.textNoDataFound.visibility = View.VISIBLE
         }
     }
+
+    override fun itemSelect(position: Int?, status: String?, type: String?) {
+        showView(position,status,type)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showView(position: Int?, status: String?, type: String?) {
+        val requestDialog = Dialog(requireContext())
+        requestDialog.setContentView(R.layout.request_dialog)
+        requestDialog.setCancelable(false)
+        requestDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val etCardNumber: EditText = requestDialog.findViewById(R.id.etCardNumber)
+        val etSubject: EditText = requestDialog.findViewById(R.id.etSubject)
+        val btnYes: TextView = requestDialog.findViewById(R.id.yes)
+        val tvDescription: TextView = requestDialog.findViewById(R.id.tvDescription)
+        val tvTitle: TextView = requestDialog.findViewById(R.id.tvTitle)
+        val tvUpload: TextView = requestDialog.findViewById(R.id.tvUpload)
+        val btnCancel: TextView = requestDialog.findViewById(R.id.Cancel)
+        val tvInfo: TextView = requestDialog.findViewById(R.id.tvInfo)
+        val tvDownload: TextView = requestDialog.findViewById(R.id.tvDownload)
+        val rcyData: RecyclerView = requestDialog.findViewById(R.id.rcyData)
+        val imgUpload: ImageView = requestDialog.findViewById(R.id.imgUpload)
+        val imgClose: ImageView = requestDialog.findViewById(R.id.imgClose)
+        val btnShow: LinearLayout = requestDialog.findViewById(R.id.btnShow)
+        tvDescription.text="Legal Problem Description"
+        tvTitle.text="Request Details"
+        tvUpload.text="Uploaded Documents"
+
+
+        val dataItem = requestList.find { it.request_id.equals(status,true) }
+
+        dataItem?.subject?.let {
+            etSubject.setText(it)
+        }
+        dataItem?.description?.let {
+            etCardNumber.setText(it)
+        }
+
+
+        dataItem?.documents?.let { list->
+            if (list.isNotEmpty()){
+                rcyData.adapter= ImageShowAdapter(requireContext(),list)
+            }
+        }
+
+        if (type.equals("0",true)){
+            tvInfo.text="Accepting will enable one on one chat and call access with the client."
+            tvInfo.visibility = View.VISIBLE
+            btnYes.text="Accept"
+            btnCancel.text="Decline"
+            btnShow.visibility = View.VISIBLE
+        }else{
+            tvInfo.visibility = View.GONE
+            btnShow.visibility = View.GONE
+        }
+
+
+        imgUpload.visibility = View.GONE
+        tvUpload.visibility = View.VISIBLE
+        tvDownload.visibility = View.VISIBLE
+        etCardNumber.isEnabled = false
+        etSubject.isEnabled = false
+
+        btnYes.setOnClickListener {
+            if (!sessionManager.isNetworkAvailable()) {
+                sessionManager.alertErrorDialog(getString(R.string.no_internet))
+            } else {
+                if (lead.toInt() > 0) {
+                    requestAction(position!!, status!!, "accepted",requestDialog)
+                } else {
+                    sessionManager.alertSubscriptionDialog(getString(R.string.leadError)){
+                        requestDialog.dismiss()
+                        findNavController().navigate(
+                            R.id.action_logFragment_to_subscriptionsFragment
+                        )
+                    }
+                }
+            }
+
+        }
+
+        btnCancel.setOnClickListener {
+            if (!sessionManager.isNetworkAvailable()) {
+                sessionManager.alertErrorDialog(getString(R.string.no_internet))
+            } else {
+                if (lead.toInt() > 0) {
+                    requestAction(position!!, status!!, "rejected",requestDialog)
+                } else {
+                    sessionManager.alertSubscriptionDialog(getString(R.string.leadError)){
+                        requestDialog.dismiss()
+                        findNavController().navigate(
+                            R.id.action_logFragment_to_subscriptionsFragment
+                        )
+                    }
+                }
+            }
+        }
+        imgClose.setOnClickListener {
+            requestDialog.dismiss()
+        }
+        requestDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        requestDialog.show()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun requestAction(
+        position: Int,
+        requestId: String,
+        action: String,
+        requestDialog: Dialog
+    ) {
+        showMe()
+        lifecycleScope.launch {
+            homeScreenViewModel.requestAction(requestId, action)
+                .observe(viewLifecycleOwner) { jsonObject ->
+                    dismissMe()
+                    val jsonObjectData = sessionManager.checkResponse(jsonObject)
+                    if (jsonObjectData != null) {
+                        try {
+                            requestList.removeAt(position)
+                            adapterRequestList.notifyDataSetChanged()
+                            if (requestList.isNotEmpty()){
+                                binding.textNoDataFound.visibility = View.GONE
+                                binding.requestListRecycleView.visibility = View.VISIBLE
+                            }else{
+                                binding.textNoDataFound.visibility = View.VISIBLE
+                                binding.requestListRecycleView.visibility = View.GONE
+                            }
+                            if (action.equals("accepted",true)) {
+                                lead = (lead.toInt() - 1).toString()
+                            }
+                            requestDialog.dismiss()
+                        } catch (e: Exception) {
+                            Log.d("@Error","***"+e.message)
+                        }
+                    }
+                }
+        }
+    }
+
+
 }
