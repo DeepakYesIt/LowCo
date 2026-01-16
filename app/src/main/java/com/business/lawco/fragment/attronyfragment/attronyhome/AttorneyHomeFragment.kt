@@ -548,7 +548,7 @@ class AttorneyHomeFragment : BaseFragment(), View.OnClickListener, HomeSelectAdd
                         }
 
                     } catch (e: IntentSender.SendIntentException) {
-                        Log.i(tAG, "PendingIntent unable to execute request.")
+                        Log.i(tAG, "PendingIntent unable to execute request."+e.message)
                     }
                 }
                 LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> Log.i(tAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.")
