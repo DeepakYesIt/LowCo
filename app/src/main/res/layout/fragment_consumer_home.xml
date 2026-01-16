@@ -244,9 +244,9 @@
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/RcvListOfAttorney"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_marginTop="@dimen/_5sdp"
-                                tools:itemCount="2"
+                                tools:itemCount="5"
                                 tools:listitem="@layout/list_of_attorney_item" />
                             <TextView
                                 android:id="@+id/textNoDataFound"

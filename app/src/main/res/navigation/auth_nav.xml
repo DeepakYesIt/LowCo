@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_signUpFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_claimProfileFragment"
+            app:destination="@id/claimProfileFragment" />
     </fragment>
 
     <fragment
@@ -160,5 +163,9 @@
         android:id="@+id/otpVerificationFragment3"
         android:name="com.business.lawco.fragment.OtpVerificationFragment"
         android:label="OtpVerificationFragment" />
+    <fragment
+        android:id="@+id/claimProfileFragment"
+        android:name="com.business.lawco.fragment.attronyfragment.claimMyProfile.ClaimProfileFragment"
+        android:label="ClaimProfileFragment" />
 
 </navigation>

@@ -26,17 +26,7 @@ class OnBoardingActivity : AppCompatActivity(),View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityOnBoardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-         binding.imageBackOnBoarding.setOnClickListener(this)
-
-
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true /* enabled by default */) {
-            override fun handleOnBackPressed() {
-               finish()
-            }
-        }
-
-        onBackPressedDispatcher.addCallback(this, callback)
+        binding.imageBackOnBoarding.setOnClickListener(this)
         sessionManager = SessionManager(this)
 
         datalist.addAll(getOnBoardingData(sessionManager.getUserType()))
@@ -45,7 +35,6 @@ class OnBoardingActivity : AppCompatActivity(),View.OnClickListener {
         binding.viewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
         TabLayoutMediator(binding.tabLayoutForIndicator, binding.viewpager) { _, _ ->
-
 
         }.attach()
 
@@ -136,6 +125,7 @@ class OnBoardingActivity : AppCompatActivity(),View.OnClickListener {
        }
     }
 
+    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
     override fun onBackPressed() {
         super.onBackPressed()
         val intent = Intent(this, IdentityActivity::class.java)

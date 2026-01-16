@@ -60,6 +60,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="claimProfileFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-313" />
+                            <option name="y" value="550" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="forgotPasswordFragment">
                     <value>
                       <LayoutPositions>
@@ -136,6 +148,11 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_profileFragment_to_allowLocationFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_profileFragment_to_otpVerificationFragment3">
                               <value>
                                 <LayoutPositions />
                               </value>

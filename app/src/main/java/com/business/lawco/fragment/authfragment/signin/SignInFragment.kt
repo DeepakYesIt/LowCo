@@ -411,14 +411,18 @@ class  SignInFragment : BaseFragment(), View.OnClickListener {
                                     findNavController().navigate(R.id.action_signInFragment_to_completeProfile)
                                 } else {
                                     sessionManager.setIsLogin(true)
-                                    val intent = Intent(requireActivity(), AttronyHomeActivity::class.java)
+                                    val intent = Intent(requireActivity(), AttronyHomeActivity::class.java).apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    }
                                     startActivity(intent)
                                     requireActivity().finish()
                                 }
                             } else {
                                 if (sessionManager.getUserType() == AppConstant.CONSUMER) {
                                     sessionManager.setIsLogin(true)
-                                    val consumerIntent = Intent(requireActivity(), ConsumerHomeActivity::class.java)
+                                    val consumerIntent = Intent(requireActivity(), ConsumerHomeActivity::class.java).apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    }
                                     startActivity(consumerIntent)
                                     requireActivity().finish()
                                 } else {

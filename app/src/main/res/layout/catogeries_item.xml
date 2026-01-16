@@ -6,7 +6,7 @@
     android:layout_width="@dimen/_80sdp"
     android:layout_height="@dimen/_80sdp"
     android:elevation="0dp"
-    android:layout_margin="@dimen/_5sdp"
+    android:layout_margin="@dimen/_3sdp"
     app:cardCornerRadius="@dimen/_10sdp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toLeftOf="parent"
@@ -22,14 +22,11 @@
 
         <ImageView
             android:id="@+id/ImageCatogeries"
-            android:layout_width="@dimen/_62sdp"
-            android:layout_height="@dimen/_42sdp"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
             android:layout_gravity="center"
-            android:paddingLeft="@dimen/_12sdp"
-            android:paddingTop="@dimen/_3sdp"
-            android:paddingRight="@dimen/_12sdp"
-            android:scaleType="fitXY"
-            android:src="@drawable/adoption_credit_card" />
+            android:padding="@dimen/_5sdp"
+             />
 
         <TextView
             android:id="@+id/tvCategoryName"
@@ -40,7 +37,7 @@
             android:fontFamily="@font/montserrat_semibold"
             android:paddingLeft="@dimen/_4sdp"
             android:paddingRight="@dimen/_4sdp"
-            android:text="Adoption"
+            android:text=""
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="@dimen/_9ssp" />

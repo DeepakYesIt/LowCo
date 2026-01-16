@@ -57,7 +57,7 @@
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_44sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
                         android:layout_marginBottom="@dimen/_20sdp"
                         android:fontFamily="@font/montserrat_bold"
                         android:text="Sign In"
@@ -70,7 +70,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_15sdp"
-                        android:layout_marginTop="@dimen/_17sdp"
+                        android:layout_marginTop="@dimen/_15sdp"
                         android:layout_marginRight="@dimen/_15sdp"
                         android:gravity="center_vertical">
 
@@ -239,7 +239,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_40sdp"
                         android:layout_marginLeft="@dimen/_40sdp"
-                        android:layout_marginTop="@dimen/_30sdp"
+                        android:layout_marginTop="@dimen/_25sdp"
                         android:layout_marginRight="@dimen/_40sdp"
                         android:background="@drawable/orange_button_identity"
                         android:fontFamily="@font/montserrat_semibold"
@@ -261,7 +261,7 @@
                         android:id="@+id/singupwith"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_13sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
                         android:fontFamily="@font/lexend_deca_light"
                         android:gravity="center_horizontal"
                         android:text="Sign In with"
@@ -270,8 +270,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_15sdp"
-                        android:layout_marginBottom="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
                         android:gravity="center_horizontal"
                         android:orientation="horizontal">
 
@@ -311,8 +311,8 @@
                         android:id="@+id/footer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_25sdp"
-                        android:paddingBottom="@dimen/_30sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:paddingBottom="@dimen/_20sdp"
                         android:gravity="center_horizontal">
 
                         <TextView

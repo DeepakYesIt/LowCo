@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +23,13 @@ import com.business.lawco.base.BaseFragment
 import com.business.lawco.databinding.FragmentClaimProfileBinding
 import com.business.lawco.model.AttorneyProfile
 import com.business.lawco.networkModel.claimProfile.ClaimProfileViewModel
+import com.withpersona.sdk2.inquiry.Environment
+import com.withpersona.sdk2.inquiry.Fields
+import com.withpersona.sdk2.inquiry.Inquiry
+import com.withpersona.sdk2.inquiry.InquiryResponse
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
+import androidx.core.graphics.drawable.toDrawable
 
 
 @AndroidEntryPoint
@@ -35,11 +43,34 @@ class ClaimProfileFragment : BaseFragment() {
     private val attorneyProfileList = ArrayList<AttorneyProfile>()
     private var searchQuery: String = ""
 
+    private lateinit var getInquiryResult: ActivityResultLauncher<Inquiry>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentClaimProfileBinding.inflate(inflater, container, false)
+
+        getInquiryResult = registerForActivityResult(Inquiry.Contract()) { result ->
+            when (result) {
+                is InquiryResponse.Complete -> {
+                    // User identity verification completed successfully
+//                    identityVerified = 1
+                    Toast.makeText(requireContext(), "Verified Successfully!", Toast.LENGTH_SHORT).show()
+                }
+                is InquiryResponse.Cancel -> {
+                    // User abandoned the verification process
+                    Toast.makeText(requireContext(),"Request Cancelled",Toast.LENGTH_LONG).show()
+                }
+                is InquiryResponse.Error -> {
+                    // Error occurred during identity verification
+                    Toast.makeText(requireContext(),"Error Occurred, Try Again",Toast.LENGTH_LONG).show()
+
+                }
+            }
+        }
+
+
         return binding.root
     }
 
@@ -161,11 +192,26 @@ class ClaimProfileFragment : BaseFragment() {
 
         textProceed.setOnClickListener {
                confirmDialog.dismiss()
-              claimProfileViewModel.claimProfile(profileId)
+               launchVerifyIdentity()
+//             claimProfileViewModel.claimProfile(profileId)
         }
 
-        confirmDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        confirmDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         confirmDialog.show()
+    }
+
+
+    private fun launchVerifyIdentity(){
+        val TEMPLATE_ID = "itmpl_yEu1QvFA5fJ1zZ9RbUo1yroGahx2"
+        val inquiry = Inquiry.fromTemplate(TEMPLATE_ID)
+            .environment(Environment.SANDBOX) // Use Environment.PRODUCTION for live verification
+            .referenceId("1") // Link the inquiry to a specific user
+            .fields(Fields.Builder().build())
+            .locale(Locale.getDefault().language)
+            .build()
+
+        getInquiryResult.launch(inquiry)
+
     }
 
     private fun showVerificationSuccessDialog() {
@@ -184,7 +230,7 @@ class ClaimProfileFragment : BaseFragment() {
             showVerificationNotCompletedDialog()
         }
 
-        successDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        successDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         successDialog.show()
 
     }
@@ -205,7 +251,7 @@ class ClaimProfileFragment : BaseFragment() {
 
         }
 
-        successDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        successDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         successDialog.show()
     }
 

@@ -54,8 +54,8 @@
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_44sdp"
-                        android:layout_marginBottom="@dimen/_20sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
                         android:fontFamily="@font/montserrat_bold"
                         android:text="Sign Up"
                         android:textColor="@color/black"
@@ -72,7 +72,7 @@
                         android:gravity="center"
                         android:visibility="gone"
                         android:paddingHorizontal="@dimen/_30sdp"
-                        android:paddingVertical="@dimen/_11sdp"
+                        android:paddingVertical="@dimen/_8sdp"
                         android:drawableStart="@drawable/solar_user_check_broken"
                         android:text="Claim My Profile"
                         android:textColor="@color/white"
@@ -84,7 +84,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_15sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
                         android:layout_marginRight="@dimen/_15sdp"
                         android:gravity="center_vertical">
 
@@ -122,8 +122,6 @@
                                 android:inputType="textPersonName"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/_12ssp" />
-
-
                         </RelativeLayout>
 
                         <RelativeLayout
@@ -131,10 +129,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/rlNameBox"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginBottom="@dimen/_15sdp"
                             android:background="@drawable/editext_bg">
-
                             <ImageView
                                 android:id="@+id/imageEmail"
                                 android:layout_width="wrap_content"
@@ -242,7 +237,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_5sdp"
 
-                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
 
                         android:orientation="horizontal">
 
@@ -278,9 +273,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_40sdp"
-                        android:layout_marginTop="@dimen/_30sdp"
+                        android:layout_marginTop="@dimen/_15sdp"
                         android:layout_marginRight="@dimen/_40sdp"
-                        android:layout_marginBottom="@dimen/_5sdp"
                         android:background="@drawable/orange_button_identity"
                         android:fontFamily="@font/montserrat_bold"
                         android:gravity="center"
@@ -293,7 +287,7 @@
                         android:id="@+id/or"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_13sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
                         android:fontFamily="@font/montserrat_bold"
                         android:gravity="center_horizontal"
                         android:text="-OR-" />
@@ -301,7 +295,7 @@
                         android:id="@+id/singupwith"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_13sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
                         android:fontFamily="@font/lexend_deca"
                         android:gravity="center_horizontal"
                         android:text="Sign Up with"

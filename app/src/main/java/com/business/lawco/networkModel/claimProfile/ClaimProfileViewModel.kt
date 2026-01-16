@@ -38,14 +38,12 @@ class ClaimProfileViewModel @Inject constructor() : ViewModel() {
     fun searchAttorneyProfiles(query: String) {
         viewModelScope.launch {
             delay(500)
-
             val result = allProfiles.filter {
                 it.fullName.contains(query, true) ||
                         it.attorneyType.contains(query, true) ||
                         it.city.contains(query, true) ||
                         it.state.contains(query, true)
             }
-
             searchResults.postValue(result)
         }
     }

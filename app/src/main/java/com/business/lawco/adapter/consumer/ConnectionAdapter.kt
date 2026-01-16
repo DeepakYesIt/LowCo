@@ -22,7 +22,7 @@ class ConnectionAdapter(private var connectionList: List<ConnectionsDataModel>, 
 
         @SuppressLint("SetTextI18n")
         fun bind(dataItem: ConnectionsDataModel, requireContext: Context) {
-            binding.btViewProfile.setOnClickListener {
+            binding.viewClick.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putString(AppConstant.ATTORNEY_PROFILE, Gson().toJson(dataItem))
                 it.findNavController().navigate(R.id.action_connectionsFragment_to_attorneyDetailsFragment, bundle)
