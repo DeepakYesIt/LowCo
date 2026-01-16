@@ -46,6 +46,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
    <!-- Error Message-->
     <string name="server_error">Server Error!</string>
     <string name="no_internet">Check  your internet connection</string>
+    <string name="leadError">Your available credits have been fully utilized. Please upgrade your plan to unlock additional credits.</string>
     <string name="fill_name">Please enter name</string>
     <string name="fill_email">Email / Phone field can\'t be empty!</string>
     <string name="fill_emailOnly">Please enter email</string>

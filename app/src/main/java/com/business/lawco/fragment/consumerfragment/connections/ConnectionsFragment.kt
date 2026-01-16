@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -78,12 +79,25 @@ class ConnectionsFragment : BaseFragment(), View.OnClickListener ,FilterApply{
         sessionManager = SessionManager(requireContext())
         consumerHomeScreenViewModel = ViewModelProvider(this)[ConsumerHomeScreenViewModel::class.java]
         binding.consumerHomeScreenViewModel = consumerHomeScreenViewModel
+
+        if (sessionManager.getSelectType().equals("Requested")){
+            selectDataType("Requested")
+        }
+        if (sessionManager.getSelectType().equals("Accepted")){
+            selectDataType("Accepted")
+        }
+        if (sessionManager.getSelectType().equals("Declined")){
+            selectDataType("Declined")
+        }
+
+
         binding.connectionRefresh.setOnRefreshListener {
             locationData()
         }
+
         binding.imageBackArrow.setOnClickListener(this)
         binding.btFilter.setOnClickListener(this)
-        locationData()
+
         binding.EtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -118,6 +132,12 @@ class ConnectionsFragment : BaseFragment(), View.OnClickListener ,FilterApply{
                 }
             }
         })
+
+        binding.layRequested.setOnClickListener(this)
+        binding.layAccepted.setOnClickListener(this)
+        binding.layDeclined.setOnClickListener(this)
+
+
     }
 
     private fun locationData(){
@@ -127,6 +147,7 @@ class ConnectionsFragment : BaseFragment(), View.OnClickListener ,FilterApply{
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 100)
         }
     }
+
     private fun getCurrentLocation() {
         // Initialize Location manager
         val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -203,7 +224,13 @@ class ConnectionsFragment : BaseFragment(), View.OnClickListener ,FilterApply{
     private fun getAllConnectedAttorneyList(latitude: String, longitude: String,list: List<String>) {
         showMe()
         lifecycleScope.launch {
-            consumerHomeScreenViewModel.getAllAttorneyList("1", latitude, longitude, list)
+            val type = when {
+                binding.RequestedLine.isVisible -> "3"
+                binding.acceptLine.isVisible -> "1"
+                binding.deniedLine.isVisible -> "2"
+                else -> "3"
+            }
+            consumerHomeScreenViewModel.getAllAttorneyList(type, latitude, longitude, list)
                 .observe(viewLifecycleOwner) { jsonObject ->
                    dismissMe()
                     binding.connectionRefresh.isRefreshing = false
@@ -240,17 +267,56 @@ class ConnectionsFragment : BaseFragment(), View.OnClickListener ,FilterApply{
 
     override fun onClick(item: View?) {
         when (item!!.id) {
-
             R.id.imageBackArrow -> {
                findNavController().navigateUp()
             }
-
+            R.id.layRequested -> {
+                selectDataType("Requested")
+            }
+            R.id.layAccepted -> {
+                selectDataType("Accepted")
+            }
+            R.id.layDeclined -> {
+                selectDataType("Declined")
+            }
             R.id.btFilter -> {
                 val bottomSheetFragment = BottomSheetAttorneyFilterDialog(this)
                 bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
             }
         }
     }
+
+
+    private fun selectDataType(selectType: String){
+        hideData(false)
+        sessionManager.setSelectType(selectType)
+        if (selectType.equals("Requested",true)){
+            binding.RequestedLine.visibility = View.VISIBLE
+            binding.deniedLine.visibility = View.GONE
+            binding.acceptLine.visibility = View.GONE
+            binding.Requested.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
+            binding.Accepted.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+            binding.Declined.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+        }
+        if (selectType.equals("Accepted",true)){
+            binding.RequestedLine.visibility = View.GONE
+            binding.deniedLine.visibility = View.GONE
+            binding.acceptLine.visibility = View.VISIBLE
+            binding.Accepted.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
+            binding.Declined.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+            binding.Requested.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+        }
+        if (selectType.equals("Declined",true)){
+            binding.RequestedLine.visibility = View.GONE
+            binding.deniedLine.visibility = View.VISIBLE
+            binding.acceptLine.visibility = View.GONE
+            binding.Accepted.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+            binding.Declined.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
+            binding.Requested.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_light))
+        }
+        locationData()
+    }
+
 
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -326,5 +392,6 @@ class ConnectionsFragment : BaseFragment(), View.OnClickListener ,FilterApply{
             getAllConnectedAttorneyList(latitude, longitude, practice)
         }
     }
+
 
 }

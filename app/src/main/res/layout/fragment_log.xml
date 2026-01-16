@@ -2,112 +2,137 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
     <data>
-
         <import type="android.view.View" />
-
         <variable
             name="homeScreenViewModel"
             type="com.business.lawco.networkModel.homeScreen.attorney.AttorneyHomeScreenViewModel" />
-
     </data>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".fragment.attronyfragment.log.LogFragment">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:id="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_50sdp"
             android:background="@drawable/dark_blue_bg"
-            android:padding="@dimen/_8sdp"
-            app:layout_constraintTop_toTopOf="parent">
+            android:padding="@dimen/_8sdp">
 
             <ImageView
                 android:id="@+id/arrowWhite"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:padding="@dimen/_4sdp"
-                android:src="@drawable/arrow_white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_alignParentStart="true"
+                android:src="@drawable/arrow_white" />
             <TextView
                 android:id="@+id/LogDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/montserrat_semibold"
                 android:gravity="center"
+                android:layout_centerInParent="true"
                 android:text="Log Details"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_15ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.constraintlayout.widget.ConstraintLayout
+                />
+        </RelativeLayout>
+        <LinearLayout
             android:id="@+id/body"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header">
-
-
-            <TextView
-                android:id="@+id/Accepted"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:fontFamily="@font/montserrat_semibold"
-                android:text="Accepted"
-                android:textColor="@color/orange"
-                android:textSize="@dimen/_16ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/acceptLine"
-                android:layout_width="@dimen/_43sdp"
-                android:layout_height="@dimen/_2sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@color/orange"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/Accepted" />
-
-
-            <TextView
-                android:id="@+id/Declined"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:fontFamily="@font/montserrat_medium"
-                android:text="Declined"
-                android:textColor="@color/gray_light"
-                android:textSize="@dimen/_16ssp"
-                app:layout_constraintStart_toEndOf="@id/Accepted"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/deniedLine"
-                android:layout_width="@dimen/_43sdp"
-                android:layout_height="@dimen/_2sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@color/orange"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@id/Accepted"
-                app:layout_constraintTop_toBottomOf="@+id/Declined" />
-
+                android:weightSum="3"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:id="@+id/layRequested"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/Requested"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:text="Requested"
+                        android:layout_gravity="start"
+                        android:textColor="@color/orange"
+                        android:textSize="@dimen/_15sdp" />
+                    <View
+                        android:id="@+id/RequestedLine"
+                        android:layout_width="@dimen/_43sdp"
+                        android:layout_height="@dimen/_2sdp"
+                        android:layout_gravity="start"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/orange"
+                        android:visibility="visible" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/layAccepted"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/Accepted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:text="Accepted"
+                        android:layout_gravity="start"
+                        android:textColor="@color/gray_light"
+                        android:textSize="@dimen/_15sdp" />
+                    <View
+                        android:id="@+id/acceptLine"
+                        android:layout_width="@dimen/_43sdp"
+                        android:layout_height="@dimen/_2sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/orange"
+                        android:layout_gravity="start"
+                        android:visibility="gone" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/layDeclined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/Declined"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:text="Declined"
+                        android:textColor="@color/gray_light"
+                        android:textSize="@dimen/_15sdp"
+                        />
+                    <View
+                        android:id="@+id/deniedLine"
+                        android:layout_width="@dimen/_43sdp"
+                        android:layout_height="@dimen/_2sdp"
+                        android:background="@color/orange"
+                        android:visibility="gone"
+                        android:layout_marginTop="@dimen/_5sdp" />
+                </LinearLayout>
+            </LinearLayout>
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
                 android:id="@+id/logRefresh"
                 android:layout_marginTop="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -138,9 +163,6 @@
                 </RelativeLayout>
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </LinearLayout>
 </layout>

@@ -128,5 +128,6 @@ dependencies {
 
     // loader latest
     implementation "com.airbnb.android:lottie:3.4.0"
-
+    //persona API
+    implementation "com.withpersona.sdk2:inquiry:2.12.15"
 }

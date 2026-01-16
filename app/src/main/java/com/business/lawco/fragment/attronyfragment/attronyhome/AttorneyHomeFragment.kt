@@ -3,10 +3,12 @@ package com.business.lawco.fragment.attronyfragment.attronyhome
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -15,20 +17,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.business.lawco.R
 import com.business.lawco.SessionManager
 import com.business.lawco.activity.attroney.AttronyHomeActivity
+import com.business.lawco.adapter.ImageShowAdapter
 import com.business.lawco.adapter.attroney.RequestListAdapter
 import com.business.lawco.base.BaseFragment
 import com.business.lawco.databinding.FragmentHomeBinding
@@ -318,7 +326,6 @@ class AttorneyHomeFragment : BaseFragment(), View.OnClickListener, HomeSelectAdd
                             requestList = requestData.data!!
                             Log.e("RequestData", "$requestList")
                             Log.e("Request List", requestData.data.toString())
-
                             if (requestList.isNotEmpty()){
                                 adapterRequestList = RequestListAdapter(requestList, requireActivity())
                                 binding.rcvCredits.adapter = adapterRequestList
@@ -326,12 +333,7 @@ class AttorneyHomeFragment : BaseFragment(), View.OnClickListener, HomeSelectAdd
                                 adapterRequestList.setOnRequestAction(object :
                                     RequestListAdapter.OnRequestAction {
                                     override fun onRequestAction(position: Int, requestId: String, action: String) {
-                                        if (binding.tvCredits.text.toString().toInt() > 0) {
-                                            requestAction(position, requestId, action)
-                                            //sessionManager.alertErrorDialog("ok")
-                                        } else {
-                                            sessionManager.alertErrorDialog("Please Use Subscription")
-                                        }
+                                        showView(position,requestId,action)
                                     }
                                 })
                                 binding.textNoDataFound.visibility = View.GONE
@@ -354,12 +356,104 @@ class AttorneyHomeFragment : BaseFragment(), View.OnClickListener, HomeSelectAdd
         }
     }
 
+
+    @SuppressLint("SetTextI18n")
+    private fun showView(position: Int, requestId: String, action: String) {
+        val requestDialog = Dialog(requireContext())
+        requestDialog.setContentView(R.layout.request_dialog)
+        requestDialog.setCancelable(false)
+        requestDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val etCardNumber: EditText = requestDialog.findViewById(R.id.etCardNumber)
+        val etSubject: EditText = requestDialog.findViewById(R.id.etSubject)
+        val btnYes: TextView = requestDialog.findViewById(R.id.yes)
+        val tvDescription: TextView = requestDialog.findViewById(R.id.tvDescription)
+        val tvTitle: TextView = requestDialog.findViewById(R.id.tvTitle)
+        val tvUpload: TextView = requestDialog.findViewById(R.id.tvUpload)
+        val btnCancel: TextView = requestDialog.findViewById(R.id.Cancel)
+        val tvInfo: TextView = requestDialog.findViewById(R.id.tvInfo)
+        val tvDownload: TextView = requestDialog.findViewById(R.id.tvDownload)
+        val rcyData: RecyclerView = requestDialog.findViewById(R.id.rcyData)
+        val imgUpload: ImageView = requestDialog.findViewById(R.id.imgUpload)
+        val imgClose: ImageView = requestDialog.findViewById(R.id.imgClose)
+
+        tvDescription.text="Legal Problem Description"
+        tvTitle.text="Request Details"
+        btnYes.text="Accept"
+        btnCancel.text="Decline"
+        tvInfo.text="Accepting will enable one on one chat and call access with the client."
+        tvUpload.text="Uploaded Documents"
+        imgUpload.visibility = View.GONE
+        tvInfo.visibility = View.VISIBLE
+        tvUpload.visibility = View.VISIBLE
+        tvDownload.visibility = View.VISIBLE
+        etCardNumber.isEnabled = false
+        etSubject.isEnabled = false
+
+        val dataItem = requestList.find { it.request_id.equals(requestId,true) }
+
+        dataItem?.subject?.let {
+            etSubject.setText(it)
+        }
+        dataItem?.description?.let {
+            etCardNumber.setText(it)
+        }
+        dataItem?.documents?.let { list->
+            if (list.isNotEmpty()){
+                rcyData.adapter= ImageShowAdapter(requireContext(),list)
+            }
+        }
+
+        btnYes.setOnClickListener {
+            if (!sessionManager.isNetworkAvailable()) {
+                sessionManager.alertErrorDialog(getString(R.string.no_internet))
+            } else {
+                if (binding.tvCredits.text.toString().toInt() > 0) {
+                    requestAction(position, requestId, "accepted", requestDialog)
+                } else {
+                    sessionManager.alertSubscriptionDialog(getString(R.string.leadError)){
+                        requestDialog.dismiss()
+                        findNavController().navigate(R.id.action_attronyHomeFragment_to_subscriptionsFragment)
+                    }
+                }
+            }
+        }
+
+        btnCancel.setOnClickListener {
+            if (!sessionManager.isNetworkAvailable()) {
+                sessionManager.alertErrorDialog(getString(R.string.no_internet))
+            } else {
+                if (binding.tvCredits.text.toString().toInt() > 0) {
+                    requestAction(position, requestId, "rejected", requestDialog)
+                } else {
+                    sessionManager.alertSubscriptionDialog(getString(R.string.leadError)){
+                        requestDialog.dismiss()
+                        findNavController().navigate(R.id.action_attronyHomeFragment_to_subscriptionsFragment)
+                    }
+                }
+            }
+        }
+
+        imgClose.setOnClickListener {
+            requestDialog.dismiss()
+        }
+        requestDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        requestDialog.show()
+
+    }
+
     // This Function is used for Accept or Deny the request
     @SuppressLint("NotifyDataSetChanged")
-    private fun requestAction(position: Int, requestId: String, action: String) {
+    private fun requestAction(
+        position: Int,
+        requestId: String,
+        action: String,
+        requestDialog: Dialog
+    ) {
+        showMe()
         lifecycleScope.launch {
             homeScreenViewModel.requestAction(requestId, action)
                 .observe(viewLifecycleOwner) { jsonObject ->
+                    dismissMe()
                     val jsonObjectData = sessionManager.checkResponse(jsonObject)
                     if (jsonObjectData != null) {
                         try {
@@ -378,6 +472,7 @@ class AttorneyHomeFragment : BaseFragment(), View.OnClickListener, HomeSelectAdd
                             }/*else{
                                 binding.tvCredits.text.toString()
                             }*/
+                            requestDialog.dismiss()
                         } catch (e: Exception) {
                             Log.d("@Error","***"+e.message)
                         }

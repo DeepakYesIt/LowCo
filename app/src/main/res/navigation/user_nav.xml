@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_attronyHomeFragment_to_notificationsFragment"
             app:destination="@id/notificationsFragment" />
+        <action
+            android:id="@+id/action_attronyHomeFragment_to_subscriptionsFragment"
+            app:destination="@id/subscriptionsFragment" />
     </fragment>
 
 
@@ -30,6 +33,9 @@
         <action
             android:id="@+id/action_logFragment_to_userDetailFragment"
             app:destination="@id/userDetailFragment" />
+        <action
+            android:id="@+id/action_logFragment_to_subscriptionsFragment"
+            app:destination="@id/subscriptionsFragment" />
     </fragment>
     <fragment
         android:id="@+id/userDetailFragment"

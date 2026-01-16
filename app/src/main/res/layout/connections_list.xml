@@ -18,7 +18,7 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_8sdp"
             android:scaleType="centerCrop"
-            android:src="@drawable/pic1" />
+            android:src="@drawable/demo_user" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,13 +45,13 @@
                 android:textSize="@dimen/_8ssp" />
             <TextView
                 android:id="@+id/tvDistance"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_3sdp"
                 android:fontFamily="@font/lexend_deca"
-                android:text="200 meters away"
+                android:text="0 meters away"
                 android:textColor="#424242"
-                android:drawablePadding="@dimen/_8sdp"
+                android:drawablePadding="@dimen/_3sdp"
                 android:drawableStart="@drawable/location_away"
                 android:textSize="@dimen/_8ssp"
                 />
@@ -73,7 +73,7 @@
                     android:id="@+id/tvAcceptedDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="4:00pm  |  Jan 14,2023"
+                    android:text=""
                     android:fontFamily="@font/lexend_deca"
                     android:textSize="@dimen/_8ssp"
                     android:layout_alignParentEnd="true" />

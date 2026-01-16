@@ -13,6 +13,9 @@ dependencyResolutionManagement {
         mavenCentral()
         jcenter()
         maven { url "https://jitpack.io" }
+        maven {
+            url "https://sdk.withpersona.com/android/releases"
+        }
     }
 }
 rootProject.name = "LawCo"

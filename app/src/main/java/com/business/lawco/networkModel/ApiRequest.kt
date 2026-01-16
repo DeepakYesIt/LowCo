@@ -180,6 +180,19 @@ interface ApiRequest {
     ): Call<JsonObject?>
 
     @Headers("Accept: application/json")
+    @Multipart
+    @POST("request-to-attorney")
+    fun sendRequestToAttorneyWithDoc(
+        @Part("attorney_id") attorneyId: RequestBody,
+        @Part("action") action: RequestBody,
+        @Part("latitude") latitude: RequestBody,
+        @Part("longitude") longitude: RequestBody,
+        @Part("subject") subject: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part files: List<MultipartBody.Part> // For multiple files
+    ): Call<JsonObject?>
+
+    @Headers("Accept: application/json")
     @POST("get-all-request")
     @FormUrlEncoded
     fun getAllRequest(

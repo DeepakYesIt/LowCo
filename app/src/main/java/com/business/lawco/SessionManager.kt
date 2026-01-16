@@ -18,9 +18,11 @@ import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import com.google.gson.Gson
@@ -30,6 +32,8 @@ import com.business.lawco.model.consumer.RememberMe
 import com.business.lawco.networkModel.BaseResponse
 import java.io.IOException
 import java.util.Locale
+import androidx.core.graphics.drawable.toDrawable
+import androidx.navigation.NavController
 
 class SessionManager(var context: Context) {
 
@@ -75,12 +79,21 @@ class SessionManager(var context: Context) {
         editor.apply()
     }
 
+
+    fun setSelectType(value: String){
+        editor.putString("SelectType", value)
+        editor.apply()
+    }
     fun setUserCurrent(current: Boolean) {
         editor.putBoolean("Current", current)
         editor.apply()
     }
     fun getUserCurrent():Boolean{
         return sharedPreferences.getBoolean("Current",false)
+    }
+
+    fun getSelectType(): String? {
+        return sharedPreferences.getString("SelectType","Requested")
     }
 
     fun setUserLng(lng: String) {
@@ -137,6 +150,46 @@ class SessionManager(var context: Context) {
 
         btnOk.setOnClickListener {
             alertErrorDialog.dismiss()
+        }
+
+        alertErrorDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertErrorDialog.show()
+    }
+
+    fun  alertSubscriptionDialog(msg:String?, onUpgradeClick: () -> Unit){
+        val alertErrorDialog= Dialog(context)
+        alertErrorDialog.setCancelable(true)
+        alertErrorDialog.setContentView(R.layout.alertbox_error)
+
+        val layoutParams = WindowManager.LayoutParams()
+        layoutParams.copyFrom(alertErrorDialog.window!!.attributes)
+
+        Log.e("Error Message",msg.toString())
+        alertErrorDialog.window!!.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+
+        alertErrorDialog.window!!.attributes = layoutParams
+
+        val tvTitle: TextView =alertErrorDialog.findViewById(R.id.tv_title)
+        val btnOk: TextView =alertErrorDialog.findViewById(R.id.btn_ok)
+        val imgClose: ImageView =alertErrorDialog.findViewById(R.id.imgClose)
+        val imgLogo: ImageView =alertErrorDialog.findViewById(R.id.imgLogo)
+
+        imgClose.visibility = View.VISIBLE
+        imgLogo.visibility = View.VISIBLE
+        tvTitle.text=msg
+
+        btnOk.text="Upgrade Plan"
+
+        imgClose.setOnClickListener {
+            alertErrorDialog.dismiss()
+        }
+
+        btnOk.setOnClickListener {
+            alertErrorDialog.dismiss()
+            onUpgradeClick()
         }
 
         alertErrorDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -240,7 +293,7 @@ class SessionManager(var context: Context) {
                 alertErrorDialog("Unable to connect to the server. Please check your internet connection.")
             }
         } else {
-           alertErrorDialog(jsonObject.message)
+            Log.d("Error","******"+jsonObject.message)
         }
         return null
     }
@@ -329,7 +382,7 @@ class SessionManager(var context: Context) {
             context.startActivity(intent)
         }
 
-        alertErrorDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertErrorDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         alertErrorDialog.show()
     }
 
@@ -341,7 +394,6 @@ class SessionManager(var context: Context) {
 
         val layoutParams = WindowManager.LayoutParams()
         layoutParams.copyFrom(alertErrorDialog.window!!.attributes)
-
 
         alertErrorDialog.window!!.setLayout(
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -361,8 +413,7 @@ class SessionManager(var context: Context) {
             }
             context.startActivity(intent)
         }
-
-        alertErrorDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertErrorDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         alertErrorDialog.show()
     }
 

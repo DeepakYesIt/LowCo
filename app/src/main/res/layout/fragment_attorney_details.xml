@@ -326,7 +326,7 @@
                     android:layout_marginTop="@dimen/_15sdp"
                     android:layout_marginRight="@dimen/_8sdp"
                     android:weightSum="2"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:gravity="center"
                     app:layout_constraintTop_toBottomOf="@+id/contactCallBox">
 
@@ -341,7 +341,7 @@
                         android:background="@drawable/orange_button_identity"
                         android:fontFamily="@font/lexend_deca"
                         android:gravity="center"
-                        android:text="View Request"
+                        android:text="View Details"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12sdp" />
                 </LinearLayout>

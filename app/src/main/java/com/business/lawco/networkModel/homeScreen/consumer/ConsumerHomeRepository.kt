@@ -3,6 +3,7 @@ package com.business.lawco.networkModel.homeScreen.consumer
 import com.google.gson.JsonObject
 import com.business.lawco.networkModel.BaseResponse
 import com.business.lawco.networkModel.SingleLiveEvent
+import okhttp3.MultipartBody
 
 interface ConsumerHomeRepository {
 
@@ -25,6 +26,16 @@ interface ConsumerHomeRepository {
         action: String,
         latitude:String,
         longitude:String
+    ): SingleLiveEvent<BaseResponse<JsonObject>>
+
+    suspend fun sendRequestToAttorneyWithDoc(
+        attorneyId: String,
+        action: String,
+        latitude: String,
+        longitude: String,
+        etSubject: String,
+        etCardNumber: String,
+        uriList: List<MultipartBody.Part>
     ): SingleLiveEvent<BaseResponse<JsonObject>>
 
 

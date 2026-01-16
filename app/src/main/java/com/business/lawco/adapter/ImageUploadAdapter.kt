@@ -46,12 +46,15 @@ class ImageUploadAdapter( var list: MutableList<Uri>,var requireContext: Context
 
         val uri = Uri.parse(dataItem.toString())
 
-        if (isPdf(uri)) {
+        if (isDocument(uri)) {
             holder.binding.hideUpload.visibility = View.GONE
-            holder.binding.imageData.setImageResource(R.drawable.pdficon)
+            if (isPdf(uri)){
+                holder.binding.imageData.setImageResource(R.drawable.pdficon)
+            }else{
+                holder.binding.imageData.setImageResource(R.drawable.docicon)
+            }
         } else {
             holder.binding.hideUpload.visibility = View.VISIBLE
-
             Glide.with(requireContext)
                 .load(uri)
                 .listener(object : RequestListener<Drawable> {
@@ -88,7 +91,18 @@ class ImageUploadAdapter( var list: MutableList<Uri>,var requireContext: Context
     }
 
     private fun isPdf(uri: Uri): Boolean {
-        val mimeType = requireContext.contentResolver.getType(uri)
-        return mimeType.equals("application/pdf", ignoreCase = true)
+        return requireContext
+            .contentResolver
+            .getType(uri)
+            .equals("application/pdf", ignoreCase = true)
     }
+    private fun isDocument(uri: Uri): Boolean {
+        val mimeType = requireContext.contentResolver.getType(uri)
+        return mimeType in listOf(
+            "application/pdf",
+            "application/msword", // .doc
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+        )
+    }
+
 }

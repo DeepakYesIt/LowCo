@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
@@ -18,11 +17,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import androidx.navigation.findNavController
+import com.business.lawco.utility.OnItemSelectListener
+import kotlinx.coroutines.CoroutineScope
 
 class AcceptedAdapter(
     private val acceptedList: ArrayList<RequestData>,
     var requireActivity: FragmentActivity,
-    var type: String
+    var type: String,
+    var OnItemSelectListener: OnItemSelectListener
 ) :
     RecyclerView.Adapter<AcceptedAdapter.Holder>() {
 
@@ -83,16 +86,25 @@ class AcceptedAdapter(
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val acceptedItem = acceptedList[position]
+
+
+
+
         if (type.equals("1",true)){
             holder.itemView.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putString(AppConstant.CONSUMER_PROFILE,Gson().toJson(acceptedItem))
-                Navigation.findNavController(it).navigate(R.id.action_logFragment_to_userDetailFragment,bundle)
+                it.findNavController().navigate(R.id.action_logFragment_to_userDetailFragment,bundle)
             }
-            holder.binding.layRequest.visibility = View.VISIBLE
+            holder.binding.btOpenProfile.visibility = View.VISIBLE
         }else{
-            holder.binding.layRequest.visibility = View.GONE
+            holder.binding.btOpenProfile.visibility = View.GONE
         }
+
+        holder.binding.btnRequest.setOnClickListener {
+            OnItemSelectListener.itemSelect(position,acceptedItem.request_id,type)
+        }
+
         holder.bind(acceptedItem, requireActivity)
 
     }

@@ -67,12 +67,12 @@ class UserDetailFragment : Fragment()  {
             findNavController().navigate(R.id.action_userDetailFragment_to_logFragment)
         }
         binding.btnRequest.setOnClickListener {
-            showView()
+            showView(consumerDetail)
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showView(){
+    private fun showView(consumerDetail: RequestData) {
         val requestDialog = Dialog(requireContext())
         requestDialog.setContentView(R.layout.request_dialog)
         requestDialog.setCancelable(false)
@@ -91,13 +91,25 @@ class UserDetailFragment : Fragment()  {
         val btnShow: LinearLayout = requestDialog.findViewById(R.id.btnShow)
         tvDescription.text="Legal Problem Description"
         tvTitle.text="Request Details"
+        tvUpload.text="Uploaded Documents"
         imgUpload.visibility = View.GONE
         tvInfo.visibility = View.GONE
         btnShow.visibility = View.GONE
-        tvUpload.visibility = View.GONE
+        tvUpload.visibility = View.VISIBLE
         etCardNumber.isEnabled = false
         etSubject.isEnabled = false
-        rcyData.adapter= ImageShowAdapter(requireContext())
+
+        consumerDetail.subject?.let {
+            etSubject.setText(it)
+        }
+        consumerDetail.description?.let {
+            etCardNumber.setText(it)
+        }
+        consumerDetail.documents?.let {list->
+            if (list.isNotEmpty()){
+                rcyData.adapter= ImageShowAdapter(requireContext(),list)
+            }
+        }
         btnYes.setOnClickListener {
             requestDialog.dismiss()
         }
