@@ -93,6 +93,7 @@
             android:fontFamily="@font/lexend_deca"
             android:singleLine="true"
             android:text=""
+            android:layout_marginEnd="@dimen/_5sdp"
             android:textColor="#424242"
             android:textSize="@dimen/_10ssp"
             app:layout_constraintLeft_toRightOf="@+id/CVForMainImage"

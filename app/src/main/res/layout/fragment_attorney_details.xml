@@ -101,7 +101,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Devon M.Thurtle Anderson"
+                            android:text=""
                             android:textColor="@color/black"
                             android:textSize="@dimen/_14sdp" />
 
@@ -111,7 +111,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_6sdp"
                             android:fontFamily="@font/lexend_deca"
-                            android:text="Business Attorney"
+                            android:text=""
                             android:textColor="#424242"
                             android:textSize="@dimen/_12sdp"/>
 
@@ -139,7 +139,7 @@
                                 android:textSize="@dimen/_11sdp"
                                 android:fontFamily="@font/lexend_deca"
                                 android:layout_marginEnd="@dimen/_15sdp"
-                                android:text="Seattle, dsd dsgdg dagd dgdgfd dgdg WA"
+                                android:text=""
                                 android:textColor="#424242" />
 
                         </LinearLayout>
@@ -163,7 +163,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="@dimen/_4sdp"
                                 android:fontFamily="@font/lexend_deca"
-                                android:text="500 meters away"
+                                android:text=""
                                 android:textSize="@dimen/_11sdp"
                                 android:textColor="#424242" />
 

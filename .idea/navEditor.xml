@@ -60,6 +60,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="claimProfileDetailsFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-140" />
+                            <option name="y" value="986" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="claimProfileFragment">
                     <value>
                       <LayoutPositions>
@@ -68,6 +80,15 @@
                             <option name="x" value="-313" />
                             <option name="y" value="550" />
                           </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_claimProfileFragment_to_claimProfileDetailsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -120,6 +141,18 @@
                               </value>
                             </entry>
                           </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="otpClaimVerificationFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="45" />
+                            <option name="y" value="1394" />
+                          </Point>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -245,6 +278,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_signUpFragment_to_claimProfileFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_signUpFragment_to_profileFragment">
                               <value>
                                 <LayoutPositions />

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/white"
-        android:paddingHorizontal="@dimen/_25sdp"
+        android:paddingHorizontal="@dimen/_10sdp"
         android:paddingBottom="@dimen/_30sdp">
 
 
@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="@dimen/_7sdp"
-            android:paddingHorizontal="@dimen/_21sdp"
+            android:paddingHorizontal="@dimen/_20sdp"
             android:text="Update Information &amp; Retry"
             android:layout_gravity="center"
             android:fontFamily="@font/montserrat_semibold"
@@ -72,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="If you continue to experience issues, please contact support for assistance."
+            android:text="@string/if_you_continue_to_experience_issues_please_contact_support_for_assistance"
             android:fontFamily="@font/lexend_deca_light"
             android:textColor="@color/black"
             android:textSize="@dimen/_9ssp"

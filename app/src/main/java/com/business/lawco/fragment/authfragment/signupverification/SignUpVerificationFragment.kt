@@ -79,8 +79,8 @@ class SignUpVerificationFragment : BaseFragment(), View.OnClickListener {
         binding.imageBack.setOnClickListener(this)
         binding.textResend.setOnClickListener(this)
         binding.imageBack.setOnClickListener(this)
-        startCountDownTimer()
-        countDownTimer!!.cancel()
+//        startCountDownTimer()
+//        countDownTimer!!.cancel()
         name = requireArguments().getString(AppConstant.NAME).toString()
         email = requireArguments().getString(AppConstant.EMAIL).toString()
         password = requireArguments().getString(AppConstant.PASSWORD).toString()
@@ -132,10 +132,7 @@ class SignUpVerificationFragment : BaseFragment(), View.OnClickListener {
                         }
                     }
                     else {
-                        binding.rlResendLine.visibility = View.GONE
                         sessionManager.alertErrorDialog(getString(R.string.otp_valid))
-//                        binding.incorrectOtp.visibility = View.VISIBLE
-                        binding.textResend.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
                     }
                 }
             }
@@ -144,18 +141,6 @@ class SignUpVerificationFragment : BaseFragment(), View.OnClickListener {
                     if (!sessionManager.isNetworkAvailable()) {
                         sessionManager.alertErrorDialog(getString(R.string.no_internet))
                     } else {
-//                        try {
-//                            // Access the private EditText array inside the OtpView using reflection
-//                            val field = OtpView::class.java.getDeclaredField("otpTextViews")
-//                            field.isAccessible = true
-//                            val editTexts = field.get(binding.OtpView) as Array<EditText>
-//                            // Clear each EditText field inside the OtpView
-//                            editTexts.forEach { it.text.clear() }
-//
-//                        } catch (e: Exception) {
-//                            e.printStackTrace()
-//                        }
-//                        userOTP=""
                         resendEnabled = false
                         sendVerificationOtp(email)
                     }
@@ -188,12 +173,8 @@ class SignUpVerificationFragment : BaseFragment(), View.OnClickListener {
                 binding.textResend.isEnabled = true
                 binding.textTimeResend.text = "00:00"
                 binding.rlResendLine.visibility = View.GONE
-                if (binding.textTimeResend.text == "00:00") {
-                    resendEnabled = true
-                    binding.textResend.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
-                } else {
-                    binding.textResend.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey))
-                }
+                resendEnabled = true
+                binding.textResend.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
             }
         }
         countDownTimer?.start()
@@ -242,7 +223,7 @@ class SignUpVerificationFragment : BaseFragment(), View.OnClickListener {
                             countDownTimer?.cancel()
                             startCountDownTimer()
                             binding.textResend.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey))
-                            receiveOTP = jsonObjectData["otp"].asString
+                            receiveOTP = jsonObjectData.get("otp")?.asString ?: ""
                             Toast.makeText(requireContext(), getString(R.string.otp_Send), Toast.LENGTH_SHORT).show()
                         }
                         catch (e :Exception){
@@ -268,7 +249,6 @@ class SignUpVerificationFragment : BaseFragment(), View.OnClickListener {
         postDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         postDialog.show()
     }
-
 
     override fun onStart() {
         super.onStart()

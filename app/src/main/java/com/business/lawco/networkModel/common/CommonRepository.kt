@@ -28,6 +28,10 @@ interface CommonRepository {
 
 
     suspend fun sendOtpEmailPhone(emailPhone: String, userType: String): SingleLiveEvent<BaseResponse<JsonObject>>
+    suspend fun sendOtpClaimEmailPhone(emailPhone: String, userID: String): SingleLiveEvent<BaseResponse<JsonObject>>
+    suspend fun personaVerifyUser(userID: String,status: String): SingleLiveEvent<BaseResponse<JsonObject>>
+    suspend fun otpClaimEmailPhoneVerify(emailPhone: String, userID: String, otp: String): SingleLiveEvent<BaseResponse<JsonObject>>
+    suspend fun searchAttorneyList(search: String): SingleLiveEvent<BaseResponse<JsonObject>>
     suspend fun otpEmailPhoneVerify(emailPhone: String, userType: String,userOTP: String): SingleLiveEvent<BaseResponse<JsonObject>>
 
     suspend fun editUserProfile(

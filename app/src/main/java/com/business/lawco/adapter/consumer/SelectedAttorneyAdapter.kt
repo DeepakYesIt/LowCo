@@ -17,6 +17,7 @@ import com.business.lawco.databinding.SelectedAttorneyListBinding
 import com.business.lawco.model.consumer.AttorneyProfile
 import com.business.lawco.utility.AppConstant
 import com.business.lawco.utility.ValidationData
+import androidx.navigation.findNavController
 
 class SelectedAttorneyAdapter(
     private var selectedAttorneyList: List<AttorneyProfile>,
@@ -41,17 +42,21 @@ class SelectedAttorneyAdapter(
             binding.btViewProfile.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putString(AppConstant.ATTORNEY_PROFILE, Gson().toJson(dataItem))
-                Navigation.findNavController(it).navigate(
-                    R.id.action_selectedAttorneyFragment_to_attorneyDetailsFragment,
-                    bundle
-                )
+                it.findNavController().navigate(R.id.action_selectedAttorneyFragment_to_attorneyDetailsFragment, bundle)
             }
 
+
+            if (dataItem.online_status == 1) {
+                binding.showActive.visibility = View.VISIBLE
+            }else{
+                binding.showActive.visibility = View.INVISIBLE
+            }
 
 
             binding.tvAttorneyName.text = dataItem.full_name
             binding.tvTypeofAttorney.text = dataItem.area_of_practice+" Attorneys"
             binding.tvAddress.text = dataItem.address
+
             if (dataItem.distance != null) {
                 binding.tvDistance.text =
                     ValidationData.formatDistance(dataItem.distance.toDouble())
@@ -84,22 +89,15 @@ class SelectedAttorneyAdapter(
 
         val dataItem = selectedAttorneyList[position]
 
-        if (dataItem.connected == 1) {
-            holder.binding.btnConnect.visibility = View.GONE
-        } else {
-            holder.binding.btnConnect.visibility = View.VISIBLE
-        }
-
         if (dataItem.request == 0) {
             holder.binding.btnConnect.text = "Connect"
             holder.binding.btnConnect.setBackgroundResource(R.drawable.orange_button_identity)
             holder.binding.btnConnect.setTextColor(getColor(requireContext, R.color.white))
         } else {
-            holder.binding.btnConnect.text = "Sent"
-            holder.binding.btnConnect.setBackgroundResource(R.drawable.sent_bg)
-            holder.binding.btnConnect.setTextColor(getColor(requireContext, R.color.black))
+            holder.binding.btnConnect.text = "Requested"
+            holder.binding.btnConnect.setBackgroundResource(R.drawable.orange_button_identity)
+            holder.binding.btnConnect.setTextColor(getColor(requireContext, R.color.white))
         }
-
 
         holder.binding.btnConnect.setOnClickListener {
             if (dataItem.request == 0) {

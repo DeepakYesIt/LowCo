@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -72,13 +73,44 @@ interface ApiRequest {
     ): Call<JsonObject?>
 
     @Headers("Accept: application/json")
-    @POST("verify-otp ")
+    @POST("cliamed-sent-otp")
+    @FormUrlEncoded
+    fun sendOtpClaimEmailPhone(
+        @Field("email_phone") emailOrPhone: String,
+        @Field("user_id") userID: String,
+    ): Call<JsonObject?>
+
+    @Headers("Accept: application/json")
+    @POST("update-claim-status")
+    @FormUrlEncoded
+    fun personaVerifyUser(
+        @Field("user_id") userID: String,
+        @Field("is_claimed") isClaimed: String,
+    ): Call<JsonObject?>
+
+    @Headers("Accept: application/json")
+    @POST("cliamed-verify-otp")
+    @FormUrlEncoded
+    fun otpClaimEmailPhoneVerify(
+        @Field("email_phone") emailOrPhone: String,
+        @Field("user_id") userID: String,
+        @Field("otp") otp: String
+    ): Call<JsonObject?>
+
+    @Headers("Accept: application/json")
+    @POST("verify-otp")
     @FormUrlEncoded
     fun otpEmailPhoneVerify(
         @Field("emailOrPhone") emailOrPhone: String,
         @Field("userType") type: String,
         @Field("otp") userOTP: String,
     ): Call<JsonObject?>
+
+    @Headers("Accept: application/json")
+    @GET("cliamed-attorney-list")
+    fun searchAttorneyList(
+        @Query("search") search: String
+    ): Call<JsonObject>
 
     @Headers("Accept: application/json")
     @POST("reset-password")

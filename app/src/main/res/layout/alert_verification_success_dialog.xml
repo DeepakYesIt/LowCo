@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:paddingVertical="@dimen/_7sdp"
             android:paddingHorizontal="@dimen/_21sdp"
-            android:text="Go To My Profile"
+            android:text="Go To Home"
             android:layout_gravity="center"
             android:fontFamily="@font/montserrat_semibold"
             android:gravity="center"

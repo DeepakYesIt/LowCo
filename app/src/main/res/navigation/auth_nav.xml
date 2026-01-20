@@ -166,6 +166,22 @@
     <fragment
         android:id="@+id/claimProfileFragment"
         android:name="com.business.lawco.fragment.attronyfragment.claimMyProfile.ClaimProfileFragment"
-        android:label="ClaimProfileFragment" />
+        android:label="ClaimProfileFragment" >
+        <action
+            android:id="@+id/action_claimProfileFragment_to_claimProfileDetailsFragment"
+            app:destination="@id/claimProfileDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/claimProfileDetailsFragment"
+        android:name="com.business.lawco.fragment.attronyfragment.claimprofiledetails.ClaimProfileDetailsFragment"
+        android:label="ClaimProfileDetailsFragment" >
+        <action
+            android:id="@+id/action_claimProfileDetailsFragment_to_otpClaimVerificationFragment"
+            app:destination="@id/otpClaimVerificationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/otpClaimVerificationFragment"
+        android:name="com.business.lawco.fragment.attronyfragment.claimprofiledetails.OtpClaimVerificationFragment"
+        android:label="OtpClaimVerificationFragment" />
 
 </navigation>

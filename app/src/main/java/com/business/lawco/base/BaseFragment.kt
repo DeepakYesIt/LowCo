@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.business.lawco.R
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import androidx.core.graphics.drawable.toDrawable
 
 open class BaseFragment() : Fragment() {
     private var dialog: Dialog? = null
@@ -20,25 +21,33 @@ open class BaseFragment() : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
-    @SuppressLint("SetTextI18n")
+
+
+    @SuppressLint("InflateParams")
     fun showMe(): Dialog? {
-        dialog?.dismiss()
-        val layoutInflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        @SuppressLint("InflateParams") val view: View =
-            layoutInflater.inflate(R.layout.my_progress, null)
-//        val mProgressTv = view.findViewById<TextView>(R.id.mProgressTv_ids)
-//        mProgressTv.text = "Please wait..."
-        dialog = Dialog(requireActivity(), R.style.CustomProgressBarTheme)
-        dialog?.setContentView(view)
-        dialog?.setCancelable(false)
-        dialog?.window?.setDimAmount(0f)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.show()
+        if (!isAdded) return null
+        if (dialog?.isShowing == true) {
+            return dialog
+        }
+        val inflater = LayoutInflater.from(requireContext())
+        val view = inflater.inflate(R.layout.my_progress, null)
+        dialog = Dialog(requireContext(), R.style.CustomProgressBarTheme).apply {
+            setContentView(view)
+            setCancelable(false)
+            window?.apply {
+                setDimAmount(0f)
+                setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+            }
+            show()
+        }
         return dialog
     }
 
     fun dismissMe() {
-        if (dialog != null) dialog?.dismiss()
+        dialog?.let {
+            if (it.isShowing) it.dismiss()
+        }
+        dialog = null
     }
 
     open fun expiryValidator(email: String?): Boolean {
@@ -49,5 +58,11 @@ open class BaseFragment() : Fragment() {
         matcher = pattern.matcher(email)
         return matcher.matches()
     }
+
+    override fun onDestroyView() {
+        dismissMe()
+        super.onDestroyView()
+    }
+
 
 }

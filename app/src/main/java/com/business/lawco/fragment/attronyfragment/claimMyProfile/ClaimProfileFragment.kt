@@ -2,7 +2,6 @@ package com.business.lawco.fragment.attronyfragment.claimMyProfile
 
 import android.app.Dialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,25 +10,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.business.lawco.R
 import com.business.lawco.SessionManager
 import com.business.lawco.adapter.attroney.AttorneyProfileAdapter
 import com.business.lawco.base.BaseFragment
 import com.business.lawco.databinding.FragmentClaimProfileBinding
-import com.business.lawco.model.AttorneyProfile
+import com.business.lawco.model.claimprofilemodellist.AttorneyListModel
+import com.business.lawco.model.claimprofilemodellist.Data
 import com.business.lawco.networkModel.claimProfile.ClaimProfileViewModel
-import com.withpersona.sdk2.inquiry.Environment
-import com.withpersona.sdk2.inquiry.Fields
-import com.withpersona.sdk2.inquiry.Inquiry
-import com.withpersona.sdk2.inquiry.InquiryResponse
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
-import androidx.core.graphics.drawable.toDrawable
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -39,36 +36,13 @@ class ClaimProfileFragment : BaseFragment() {
     private lateinit var binding: FragmentClaimProfileBinding
     private lateinit var claimProfileViewModel: ClaimProfileViewModel
     private lateinit var attorneyProfileAdapter: AttorneyProfileAdapter
+    private lateinit var textListener: TextWatcher
+    private var textChangedJob: Job? = null
 
-    private val attorneyProfileList = ArrayList<AttorneyProfile>()
-    private var searchQuery: String = ""
+    private var dataList: MutableList<Data> = mutableListOf()
 
-    private lateinit var getInquiryResult: ActivityResultLauncher<Inquiry>
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentClaimProfileBinding.inflate(inflater, container, false)
-
-        getInquiryResult = registerForActivityResult(Inquiry.Contract()) { result ->
-            when (result) {
-                is InquiryResponse.Complete -> {
-                    // User identity verification completed successfully
-//                    identityVerified = 1
-                    Toast.makeText(requireContext(), "Verified Successfully!", Toast.LENGTH_SHORT).show()
-                }
-                is InquiryResponse.Cancel -> {
-                    // User abandoned the verification process
-                    Toast.makeText(requireContext(),"Request Cancelled",Toast.LENGTH_LONG).show()
-                }
-                is InquiryResponse.Error -> {
-                    // Error occurred during identity verification
-                    Toast.makeText(requireContext(),"Error Occurred, Try Again",Toast.LENGTH_LONG).show()
-
-                }
-            }
-        }
 
 
         return binding.root
@@ -76,107 +50,104 @@ class ClaimProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         sessionManager = SessionManager(requireContext())
-        claimProfileViewModel = ViewModelProvider(this)[ClaimProfileViewModel::class.java]
-
+        claimProfileViewModel = ViewModelProvider(requireActivity())[ClaimProfileViewModel::class.java]
         setupRecyclerView()
         setupSearchListener()
-        observeSearchResults()
-        observeClaimResult()
-
+        claimProfileViewModel.dataList.observe(viewLifecycleOwner) { list ->
+            if (list.isNotEmpty()){
+                attorneyProfileAdapter.updateProfileList(dataList)
+                showEmptyState(true)
+            }else{
+                showEmptyState(false)
+            }
+        }
         binding.btBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.ivSearch.setOnClickListener {
-            performSearch()
-        }
-
-        claimProfileViewModel.searchAttorneyProfiles("")
-
     }
-
-
-
     private fun setupRecyclerView() {
-        attorneyProfileAdapter = AttorneyProfileAdapter(attorneyProfileList, requireActivity())
-        binding.rvSearchResults.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        attorneyProfileAdapter = AttorneyProfileAdapter(dataList, requireActivity())
         binding.rvSearchResults.adapter = attorneyProfileAdapter
-
         attorneyProfileAdapter.setOnClaimProfile(object : AttorneyProfileAdapter.OnClaimProfile {
             override fun onClaimProfile(position: Int, profileId: String) {
-                showClaimConfirmationDialog(position, profileId)
+                showClaimConfirmationDialog( profileId)
             }
         })
     }
-
-
     private fun setupSearchListener() {
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
+        textListener = object : TextWatcher {
+            private var searchFor = "" // Or view.editText.text.toString()
+            override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchQuery = s.toString().trim()
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                if (searchQuery.length >= 2) {
-                    performSearch()
-                } else if (searchQuery.isEmpty()) {
-                    claimProfileViewModel.searchAttorneyProfiles("")
-                }
-            }
-        })
-    }
-
-
-    private fun performSearch() {
-        claimProfileViewModel.searchAttorneyProfiles(searchQuery)
-    }
-
-    private fun observeSearchResults() {
-        claimProfileViewModel.getSearchResults().observe(viewLifecycleOwner) { list ->
-
-            attorneyProfileList.clear()
-            attorneyProfileList.addAll(list)
-
-            if (attorneyProfileList.isNotEmpty()) {
-                binding.rvSearchResults.visibility = View.VISIBLE
-                binding.emptyStateContainer.visibility = View.GONE
-                attorneyProfileAdapter.updateProfileList(attorneyProfileList)
-            } else {
-                showEmptyState()
-            }
-        }
-    }
-
-    private fun observeClaimResult() {
-        claimProfileViewModel.getClaimResult().observe(viewLifecycleOwner) { success ->
-            if (success) {
-                val pos = attorneyProfileList.indexOfFirst { it.profileId == getLastClaimedId() }
-                if (pos != -1) {
-                    attorneyProfileList[pos] =
-                        attorneyProfileList[pos].copy(isClaimed = true)
-                    attorneyProfileAdapter.notifyItemChanged(pos)
+                val searchText = s.toString()
+                if (searchText != searchFor) {
+                    searchFor = searchText
+                    textChangedJob?.cancel()
+                    // Launch a new coroutine in the lifecycle scope
+                    textChangedJob = lifecycleScope.launch {
+                        delay(1000)  // Debounce time
+                        if (searchText.equals(searchFor,true)) {
+                            searchApi(searchText)
+                        }else{
+                            showEmptyState(false)
+                        }
+                    }
+                }else{
+                    showEmptyState(false)
                 }
             }
         }
     }
-
-    // simple helper
-    private fun getLastClaimedId(): String {
-        return attorneyProfileList.first { !it.isClaimed }.profileId
+    private fun searchApi(value:String){
+        if (!sessionManager.isNetworkAvailable()) {
+            sessionManager.alertErrorDialog(getString(R.string.no_internet))
+        } else {
+            binding.loader.visibility= View.VISIBLE
+            lifecycleScope.launch {
+                // Log the final JSON data
+                Log.d("final data", "******$value")
+                claimProfileViewModel.searchAttorneyList(value).observe(viewLifecycleOwner) { jsonObject ->
+                    binding.loader.visibility= View.GONE
+                    Log.d("API_RESPONSE", jsonObject.toString())
+                    val jsonObjectData = sessionManager.checkResponseHidemessage(jsonObject)
+                    Log.e("Get Profile", "True")
+                    if (jsonObjectData != null) {
+                        try {
+                            val apiModel = Gson().fromJson(jsonObject.response, AttorneyListModel::class.java)
+                            dataList.clear()
+                            apiModel.data?.let {
+                                dataList.addAll(apiModel.data)
+                            }
+                            claimProfileViewModel.setDataList(dataList)
+                            if (dataList.isNotEmpty()){
+                                attorneyProfileAdapter.updateProfileList(dataList)
+                                showEmptyState(true)
+                            }else{
+                                showEmptyState(false)
+                            }
+                        } catch (e: Exception) {
+                            showEmptyState(false)
+                            Log.d("@Error","***"+e.message)
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    // ---------------- Empty State ----------------
-
-    private fun showEmptyState() {
-        binding.rvSearchResults.visibility = View.GONE
-        binding.emptyStateContainer.visibility = View.VISIBLE
+    private fun showEmptyState(status: Boolean) {
+        if (status){
+            binding.rvSearchResults.visibility = View.VISIBLE
+            binding.emptyStateContainer.visibility = View.GONE
+        }else{
+            binding.rvSearchResults.visibility = View.GONE
+            binding.emptyStateContainer.visibility = View.VISIBLE
+        }
     }
 
-    private fun showClaimConfirmationDialog(position: Int, profileId: String) {
+    private fun showClaimConfirmationDialog( profileId: String) {
         val confirmDialog = Dialog(requireContext())
         confirmDialog.setContentView(R.layout.alert_claim_confirmation_dialog)
         confirmDialog.setCancelable(false)
@@ -187,72 +158,36 @@ class ClaimProfileFragment : BaseFragment() {
 
         textCancel.setOnClickListener {
             confirmDialog.dismiss()
-            showVerificationSuccessDialog()
         }
 
         textProceed.setOnClickListener {
-               confirmDialog.dismiss()
-               launchVerifyIdentity()
-//             claimProfileViewModel.claimProfile(profileId)
+            confirmDialog.dismiss()
+            val dataItem = dataList.find { it.id == profileId.toInt() }
+            dataItem?.let {
+                claimProfileViewModel.selectAttorney(dataItem)
+                claimProfileViewModel.updatePhoneStatus(false)
+                claimProfileViewModel.updateEmailStatus(false)
+                findNavController().navigate(R.id.action_claimProfileFragment_to_claimProfileDetailsFragment)
+            }
         }
 
         confirmDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         confirmDialog.show()
     }
 
-
-    private fun launchVerifyIdentity(){
-        val TEMPLATE_ID = "itmpl_yEu1QvFA5fJ1zZ9RbUo1yroGahx2"
-        val inquiry = Inquiry.fromTemplate(TEMPLATE_ID)
-            .environment(Environment.SANDBOX) // Use Environment.PRODUCTION for live verification
-            .referenceId("1") // Link the inquiry to a specific user
-            .fields(Fields.Builder().build())
-            .locale(Locale.getDefault().language)
-            .build()
-
-        getInquiryResult.launch(inquiry)
-
+    override fun onResume() {
+        super.onResume()
+        binding.etSearch.addTextChangedListener(textListener)
     }
 
-    private fun showVerificationSuccessDialog() {
-        val successDialog = Dialog(requireContext())
-        successDialog.setContentView(R.layout.alert_verification_success_dialog)
-        successDialog.setCancelable(false)
-        successDialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        val btnGoToProfile = successDialog.findViewById<TextView>(R.id.btnGoToProfile)
-
-        btnGoToProfile.setOnClickListener {
-            successDialog.dismiss()
-            showVerificationNotCompletedDialog()
-        }
-
-        successDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-        successDialog.show()
-
+    override fun onPause() {
+        binding.etSearch.removeTextChangedListener(textListener)
+        super.onPause()
     }
 
-    private fun showVerificationNotCompletedDialog() {
-        val successDialog = Dialog(requireContext())
-        successDialog.setContentView(R.layout.alert_verification_not_completed_dialog)
-        successDialog.setCancelable(false)
-        successDialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        val btnUpdateInformation = successDialog.findViewById<TextView>(R.id.btnUpdateInformation)
-
-        btnUpdateInformation.setOnClickListener {
-            successDialog.dismiss()
-
-        }
-
-        successDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-        successDialog.show()
+    override fun onDestroy() {
+        super.onDestroy()
+        claimProfileViewModel.clearAllData()
     }
 
 }

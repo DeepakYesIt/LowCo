@@ -156,6 +156,7 @@ class OtpVerificationFragment : BaseFragment(), View.OnClickListener {
             }
         }
     }
+
     private fun startCountDownTimer() {
         countDownTimer = object : CountDownTimer(120000, 1000) {
             @SuppressLint("SetTextI18n")

@@ -35,15 +35,14 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
     <string name="attorney_registration_number">Attorney Registration Number</string>
     <string name="about">About</string>
     <string name="edit">Edit</string>
-     <string name="create_an_account">Don\'t have an account? Sign Up</string>
+    <string name="create_an_account">Don\'t have an account? Sign Up</string>
     <string name="firebase_webclient_id">234470772287-4pban11bo5eqem6ae4o6qbops25jvcmt.apps.googleusercontent.com</string>
     <string name="app_id">1:234470772287:android:8d6084201d7e1d41d7f28a</string>
     <string name="already_have_an_account">Already have an account? Sign In</string>
     <string name="didn_t_receive_the_verification_code">Didn\'t receive the verification code?</string>
 
 
-
-   <!-- Error Message-->
+    <!-- Error Message-->
     <string name="server_error">Server Error!</string>
     <string name="no_internet">Check  your internet connection</string>
     <string name="leadError">Your available credits have been fully utilized. Please upgrade your plan to unlock additional credits.</string>
@@ -64,9 +63,9 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
     <string name="fill_profile">Please Select profile picture</string>
     <string name="fill_valid_phone">Please enter the valid phone number</string>
     <string name="fill_password">Password field can\'t be empty!</string>
-<!--    <string name="password_validation_text">Please include that at least 1 uppercase also should be there and min 8 characters</string>-->
+    <!--    <string name="password_validation_text">Please include that at least 1 uppercase also should be there and min 8 characters</string>-->
     <string name="password_validation_text">Enter atleast 1 number, 1 alphabet and 1 special character.</string>
-<!--    <string name="password_validation_text">Enter atLeast 1 number, 1 alphabet and 1 special character..</string>-->
+    <!--    <string name="password_validation_text">Enter atLeast 1 number, 1 alphabet and 1 special character..</string>-->
     <string name="fill_message">Message field can\'t be empty!</string>
     <string name="accept_term_condition">"Please accept the terms and condition"</string>
     <string name="fill_otp">Incorrect verification code, please try again!</string>
@@ -91,6 +90,14 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
     <string name="fb_login_protocol_scheme">fb676159851782722</string>
     <string name="facebook_client_token">2520a79421be81972584483e8f6290ff</string>
     <string name="todo">TODO</string>
+    <string name="submit">Submit</string>
+    <string name="resend_verification_code_in">Resend verification code in</string>
+    <string name="_00_00">00:00</string>
+    <string name="enter_the_verification_code_sent_to_your_registered_email_phone">Enter the verification code sent to your registered email/phone.</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="if_you_continue_to_experience_issues_please_contact_support_for_assistance"><![CDATA[If you continue to experience issues, please contact support for assistance.]]></string>
+    <string name="notifications">Notifications</string>
+    <string name="my_transactions">My Transactions</string>
 
 
 </resources>

@@ -303,6 +303,122 @@ class CommonRepositoryImplement @Inject constructor(private val apiInterface: Ap
         return data
     }
 
+    override suspend fun sendOtpClaimEmailPhone(emailPhone: String, userID: String): SingleLiveEvent<BaseResponse<JsonObject>> {
+        val data: SingleLiveEvent<BaseResponse<JsonObject>> = SingleLiveEvent()
+        val obj: BaseResponse<JsonObject> = BaseResponse()
+        apiInterface.sendOtpClaimEmailPhone(emailPhone,userID).enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                try {
+                    if (response.body() != null) {
+                        obj.setResponseAlt(response.body()!!)
+                        obj.setIsErrorAlt(false)
+                    } else {
+                        obj.setMessageAlt("Server error")
+                        obj.setIsErrorAlt(true)
+                    }
+                    data.value = obj
+                } catch (e: Exception) {
+                    obj.setIsErrorAlt(true)
+                    obj.setMessageAlt(e.message.toString())
+                    data.value = obj
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                obj.setIsErrorAlt(true)
+                obj.setMessageAlt(t.message.toString())
+                data.value = obj
+            }
+        })
+        return data
+    }
+
+    override suspend fun personaVerifyUser(userID: String,status: String): SingleLiveEvent<BaseResponse<JsonObject>> {
+        val data: SingleLiveEvent<BaseResponse<JsonObject>> = SingleLiveEvent()
+        val obj: BaseResponse<JsonObject> = BaseResponse()
+        apiInterface.personaVerifyUser(userID,status).enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                try {
+                    if (response.body() != null) {
+                        obj.setResponseAlt(response.body()!!)
+                        obj.setIsErrorAlt(false)
+                    } else {
+                        obj.setMessageAlt("Server error")
+                        obj.setIsErrorAlt(true)
+                    }
+                    data.value = obj
+                } catch (e: Exception) {
+                    obj.setIsErrorAlt(true)
+                    obj.setMessageAlt(e.message.toString())
+                    data.value = obj
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                obj.setIsErrorAlt(true)
+                obj.setMessageAlt(t.message.toString())
+                data.value = obj
+            }
+        })
+        return data
+    }
+
+    override suspend fun otpClaimEmailPhoneVerify(emailPhone: String, userID: String,otp: String): SingleLiveEvent<BaseResponse<JsonObject>> {
+        val data: SingleLiveEvent<BaseResponse<JsonObject>> = SingleLiveEvent()
+        val obj: BaseResponse<JsonObject> = BaseResponse()
+        apiInterface.otpClaimEmailPhoneVerify(emailPhone,userID,otp).enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                try {
+                    if (response.body() != null) {
+                        obj.setResponseAlt(response.body()!!)
+                        obj.setIsErrorAlt(false)
+                    } else {
+                        obj.setMessageAlt("Server error")
+                        obj.setIsErrorAlt(true)
+                    }
+                    data.value = obj
+                } catch (e: Exception) {
+                    obj.setIsErrorAlt(true)
+                    obj.setMessageAlt(e.message.toString())
+                    data.value = obj
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                obj.setIsErrorAlt(true)
+                obj.setMessageAlt(t.message.toString())
+                data.value = obj
+            }
+        })
+        return data
+    }
+
+    override suspend fun searchAttorneyList(search: String): SingleLiveEvent<BaseResponse<JsonObject>> {
+        val data: SingleLiveEvent<BaseResponse<JsonObject>> = SingleLiveEvent()
+        val obj: BaseResponse<JsonObject> = BaseResponse()
+        apiInterface.searchAttorneyList(search).enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                try {
+                    if (response.body() != null) {
+                        obj.setResponseAlt(response.body()!!)
+                        obj.setIsErrorAlt(false)
+                    } else {
+                        obj.setMessageAlt("Server error")
+                        obj.setIsErrorAlt(true)
+                    }
+                    data.value = obj
+                } catch (e: Exception) {
+                    obj.setIsErrorAlt(true)
+                    obj.setMessageAlt(e.message.toString())
+                    data.value = obj
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                obj.setIsErrorAlt(true)
+                obj.setMessageAlt(t.message.toString())
+                data.value = obj
+            }
+        })
+        return data
+    }
+
     override suspend fun otpEmailPhoneVerify(
         emailPhone: String,
         userType: String,

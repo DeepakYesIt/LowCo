@@ -130,4 +130,8 @@ dependencies {
     implementation "com.airbnb.android:lottie:3.4.0"
     //persona API
     implementation "com.withpersona.sdk2:inquiry:2.12.15"
+
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2" // or latest
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+
 }

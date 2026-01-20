@@ -12,11 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.business.lawco.R
 import com.business.lawco.model.AttorneyProfile
+import com.business.lawco.model.claimprofilemodellist.Data
 
 import de.hdodenhof.circleimageview.CircleImageView
 
 class AttorneyProfileAdapter(
-    private var profileList: ArrayList<AttorneyProfile>,
+    private var profileList: MutableList<Data>,
     private val context: Context
 ) : RecyclerView.Adapter<AttorneyProfileAdapter.ViewHolder>() {
 
@@ -31,7 +32,7 @@ class AttorneyProfileAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateProfileList(newList: ArrayList<AttorneyProfile>) {
+    fun updateProfileList(newList: MutableList<Data>) {
         profileList = newList
         notifyDataSetChanged()
     }
@@ -45,14 +46,14 @@ class AttorneyProfileAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val profile = profileList[position]
 
-        holder.tvAttorneyName.text = profile.fullName
-        holder.tvAttorneyType.text = profile.attorneyType
-        holder.tvLocation.text = "${profile.city}, ${profile.state}"
+        holder.tvAttorneyName.text = profile.full_name?:""
+        holder.tvAttorneyType.text = profile.area_of_practice?:""
+        holder.tvLocation.text = profile.address?:""
 
         // Load profile image
-        if (profile.profileImage != null) {
+        if (profile.profile_picture != null) {
             Glide.with(context)
-                .load(profile.profileImage)
+                .load(profile.profile_picture)
                 .placeholder(R.drawable.empty_profile_icon)
                 .error(R.drawable.empty_profile_icon)
                 .into(holder.ivProfileImage)
@@ -61,7 +62,7 @@ class AttorneyProfileAdapter(
         }
 
         // Handle claim status
-        if (profile.isClaimed) {
+        if (profile.is_claimed==1) {
             holder.btnClaimProfile.visibility = View.GONE
             holder.tvClaimedBadge.visibility = View.VISIBLE
         } else {
@@ -70,7 +71,7 @@ class AttorneyProfileAdapter(
         }
 
         holder.btnClaimProfile.setOnClickListener {
-            onClaimProfile?.onClaimProfile(position, profile.profileId)
+            onClaimProfile?.onClaimProfile(position, profile.id.toString())
         }
     }
 

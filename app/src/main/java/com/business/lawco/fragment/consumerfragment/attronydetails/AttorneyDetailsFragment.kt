@@ -63,6 +63,7 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
     private var gMap: GoogleMap? = null
 
     private var connected : Int = 0
+    private var declined : Int = 0
     private var requestSent : Int = 0
 
     lateinit var sessionManager: SessionManager
@@ -169,7 +170,8 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
         binding.tvPhone.text = attorneyDetail?.phone.toString()
         binding.tvEmail.text = attorneyDetail?.email
         binding.tvAddress.text = attorneyDetail?.address
-        connected = attorneyDetail?.connected!!
+        connected = attorneyDetail?.connected?:0
+        declined = attorneyDetail?.declined?:0
         requestSent = attorneyDetail?.request!!
         phone = attorneyDetail?.phone.toString()
 
@@ -228,15 +230,27 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun viewDetail(){
-            binding.btConnect.visibility = View.VISIBLE
-            if (requestSent == 1){
+        if (declined == 1 ){
+            connected=0
+            binding.btConnect.visibility = View.GONE
+            binding.callEnableBox.visibility = View.VISIBLE
+        }else{
+            if (connected == 1){
+                binding.btConnect.visibility = View.GONE
+                binding.callEnableBox.visibility = View.GONE
                 binding.layRequest.visibility = View.VISIBLE
-                binding.btConnect.text = "Requested"
-            } else{
-                binding.layRequest.visibility = View.GONE
-                binding.btConnect.text = "Connect"
+            }else{
+                if (requestSent == 1){
+                    binding.layRequest.visibility = View.VISIBLE
+                    binding.btConnect.text = "Requested"
+                } else{
+                    binding.layRequest.visibility = View.GONE
+                    binding.btConnect.text = "Connect"
+                }
             }
+        }
 
     }
 
@@ -535,8 +549,6 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
                 }
         }
     }
-
-
 
     fun createMultipartFiles(uriList: MutableList<Uri>): List<MultipartBody.Part> {
         val parts = mutableListOf<MultipartBody.Part>()

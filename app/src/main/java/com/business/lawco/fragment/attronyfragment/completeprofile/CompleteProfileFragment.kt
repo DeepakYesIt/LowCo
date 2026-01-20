@@ -1,13 +1,17 @@
 package com.business.lawco.fragment.attronyfragment.completeprofile
 
-import android.Manifest.permission
+import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.IntentSender.SendIntentException
+import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.os.Build
+import android.location.Address
+import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -21,26 +25,13 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.common.api.Status
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.google.gson.Gson
 import com.business.lawco.R
 import com.business.lawco.SessionManager
 import com.business.lawco.activity.IdentityActivity
@@ -53,7 +44,25 @@ import com.business.lawco.networkModel.common.CommonViewModel
 import com.business.lawco.utility.AppConstant
 import com.business.lawco.utility.MediaUtility
 import com.business.lawco.utility.ValidationData
-import com.business.lawco.utility.ValidationData.getAddress
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.PendingResult
+import com.google.android.gms.common.api.Status
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResult
+import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -63,8 +72,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.util.Arrays
-import java.util.concurrent.Executors
+import java.io.IOException
+import java.util.Locale
 
 @AndroidEntryPoint
 class CompleteProfileFragment : BaseFragment(), View.OnClickListener {
@@ -79,8 +88,11 @@ class CompleteProfileFragment : BaseFragment(), View.OnClickListener {
     private var existingEmail = ""
     private var existingPhone = ""
     private var categoriesPageList = ArrayList<AreaOfPractice>()
-
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
+    private var locationManager: LocationManager? = null
     private var tAGProfile = "MyProfileFragment"
+
+    private var tAG: String = "Location"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,6 +147,10 @@ class CompleteProfileFragment : BaseFragment(), View.OnClickListener {
         sessionManager = context?.let { SessionManager(it) }!!
         commonViewModel = ViewModelProvider(requireActivity())[CommonViewModel::class.java]
         binding.commonViewModel = commonViewModel
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        locationManager = requireActivity().getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+
+
         binding.etAreaOfPractice.setOnClickListener(this)
         binding.btSubmit.setOnClickListener(this)
         binding.uploadIcon.setOnClickListener(this)
@@ -231,9 +247,108 @@ class CompleteProfileFragment : BaseFragment(), View.OnClickListener {
             }
         }
 
+        locationData()
+
         return binding.root
     }
 
+    private fun locationData(){
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getCurrentLocation()
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 100)
+        }
+    }
+
+    private fun getCurrentLocation() {
+        // Initialize Location manager
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        // Check condition
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            // When location service is enabled
+            // Get last location
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            mFusedLocationClient.lastLocation.addOnCompleteListener { task ->
+                // Initialize location
+                val location = task.result
+                // Check condition
+                if (location != null) {
+                    lat = location.latitude.toString()
+                    lng = location.longitude.toString()
+                    handleNewLocation()
+                } else {
+                    val locationRequest =
+                        LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                            .setInterval(10000)
+                            .setFastestInterval(1000)
+                            .setNumUpdates(1)
+
+                    val locationCallback: LocationCallback = object : LocationCallback() {
+                        override fun onLocationResult(locationResult: LocationResult) {
+                            // Initialize
+                            // location
+                            val location1 = locationResult.lastLocation
+                            lat = location1!!.latitude.toString()
+                            lng = location1.longitude.toString()
+                            handleNewLocation()
+                        }
+                    }
+                    mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper()!!)
+                }
+            }
+        } else {
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), 100
+            )
+        }
+    }
+
+
+    private fun handleNewLocation(){
+        getAddressFromLocation(lat.toDouble(), lng.toDouble())
+    }
+
+    private fun getAddressFromLocation(
+        latitude: Double,
+        longitude: Double,
+    ) {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        try {
+            val addresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+            if (!addresses.isNullOrEmpty()) {
+                val address: Address = addresses[0]
+                val addressParts = mutableListOf<String>()
+                for (i in 0..address.maxAddressLineIndex) {
+                    addressParts.add(address.getAddressLine(i))
+                }
+                binding.etLocation.text = addressParts.joinToString(separator = "\n")
+                Log.e("Address", address.toString())
+            }
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            illegalArgumentException.printStackTrace()
+        }
+    }
     private fun checkNumber(){
         if (existingEmail.isNotEmpty()){
             if (binding.etEmail.text.toString().equals(existingEmail, ignoreCase = true)) {
@@ -265,6 +380,7 @@ class CompleteProfileFragment : BaseFragment(), View.OnClickListener {
             binding.phoneVerifyClick.visibility = View.VISIBLE
         }
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val callback: OnBackPressedCallback =
@@ -277,7 +393,6 @@ class CompleteProfileFragment : BaseFragment(), View.OnClickListener {
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
-
 
     private fun sendOtpEmailPhone(userSelect: String){
         showMe()
@@ -399,6 +514,72 @@ class CompleteProfileFragment : BaseFragment(), View.OnClickListener {
         if (requestCode == ImagePicker.REQUEST_CODE) {
             data?.let {
                 onSelectFromGalleryResultant(it)
+            }
+        }
+
+        if (requestCode == 100) {
+            if (Activity.RESULT_OK == resultCode) {
+                getCurrentLocation()
+            } else {
+                Toast.makeText(requireContext(), "Please turn on location", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    }
+
+
+    private fun displayLocationSettingsRequest(context: Context) {
+        val googleApiClient = GoogleApiClient.Builder(context)
+            .addApi(LocationServices.API).build()
+        googleApiClient.connect()
+        val locationRequest: LocationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 10000
+        locationRequest.fastestInterval = 1000
+        locationRequest.numUpdates = 1
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        builder.setAlwaysShow(true)
+        val result: PendingResult<LocationSettingsResult> =
+            LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build())
+        result.setResultCallback { result ->
+            val status: Status = result.status
+            when (status.statusCode) {
+                LocationSettingsStatusCodes.SUCCESS -> {
+                    Log.i(tAG, "All location settings are satisfied.")
+                    getCurrentLocation()
+                }
+                LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                    Log.i(tAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ")
+                    try {
+                        // Show the dialog by calling startResolutionForResult(), and check the result
+                        // in onActivityResult().
+                        status.resolution?.let {
+                            startIntentSenderForResult(it.intentSender, 100, null, 0, 0, 0, null)
+                        }
+
+                    } catch (e: IntentSender.SendIntentException) {
+                        Log.i(tAG, "PendingIntent unable to execute request.")
+                    }
+                }
+                LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> Log.i(tAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.")
+
+            }
+        }
+    }
+
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 100) {
+            if (grantResults.isNotEmpty() && (grantResults[0] + grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                displayLocationSettingsRequest(requireContext())
+            } else {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    getCurrentLocation()
+                } else {
+                    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 100)
+                }
             }
         }
     }
@@ -600,7 +781,6 @@ class CompleteProfileFragment : BaseFragment(), View.OnClickListener {
             }
         }
     }
-
 
     private fun getAreaOfPractice() {
         showMe()

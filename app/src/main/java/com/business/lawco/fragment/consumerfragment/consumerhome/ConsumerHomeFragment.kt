@@ -681,6 +681,7 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
             .show()
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun getAreaOfPractice() {
         binding.EtSearch.text.clear()
         lifecycleScope.launch {

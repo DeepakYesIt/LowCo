@@ -10,6 +10,7 @@ data class AttorneyListDataModel(
 data class AttorneyProfile(
     val connected: Int,
     var request: Int,
+    var declined: Int,
     val profile_picture_url :String,
     val full_name: String,
     val address: String,
@@ -45,6 +46,7 @@ data class ConnectionsDataModel(
     val address: String,
     val area_of_practice: String?,
     val connected: Int,
+    val declined: Int,
     val distance: Double?,
     val email: String,
     val full_name: String?,

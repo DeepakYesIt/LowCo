@@ -75,7 +75,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply,OnItemSelectListener {
     lateinit var binding: FragmentSelectedAttorneyBinding
     private lateinit var adapterSelectedAttorney: SelectedAttorneyAdapter
-    private var attorneyList: List<AttorneyProfile> = arrayListOf()
+    private var attorneyList: MutableList<AttorneyProfile> = arrayListOf()
     private lateinit var attorneySearchAdapter: AttorneySearchAdapter
     lateinit var sessionManager: SessionManager
     private lateinit var consumerHomeScreenViewModel: ConsumerHomeScreenViewModel
@@ -191,6 +191,7 @@ class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply
 
         addressList = requireArguments().getStringArrayList(AppConstant.ADDRESS_LIST)!!
         areaOfPracticeList = requireArguments().getStringArrayList(AppConstant.AREA_OF_PRACTICE_LIST)!!
+
         binding.tvSelectedAttorney.text = requireArguments().getString(AppConstant.FILTER_PAGE_NAME)
 
         binding.EtSearch.hint = "Search an " + binding.tvSelectedAttorney.text
@@ -339,8 +340,7 @@ class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply
             sessionManager.setUserLat(latitude.toString())
             sessionManager.setUserLng(longitude.toString())
         }
-        getAllAttorneyList(latitude, longitude, listOf(), listOf())
-
+        getAllAttorneyList(latitude, longitude, listOf(), areaOfPracticeList)
     }
 
     private fun showList(){
@@ -463,9 +463,9 @@ class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply
                     val jsonObjectData = sessionManager.checkResponse(jsonObject)
                     if (jsonObjectData != null) {
                         try {
+                            attorneyList.clear()
                             val attorneyListResp = Gson().fromJson(jsonObjectData, AttorneyListDataModel::class.java)
-                            attorneyList = attorneyListResp.data
-
+                            attorneyList = attorneyListResp.data as MutableList
                             if (attorneyList.isNotEmpty()){
                                 adapterSelectedAttorney.updateData(attorneyList)
                                 attorneySearchAdapter.updateData(attorneyList, binding.searchView, binding.EtSearch)
@@ -475,8 +475,6 @@ class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply
                                 binding.rcvSelectedAttorney.visibility = View.GONE
                                 binding.textNoDataFound.visibility = View.VISIBLE
                             }
-
-
                         } catch (e: Exception) {
                             binding.rcvSelectedAttorney.visibility = View.GONE
                             binding.textNoDataFound.visibility = View.VISIBLE
@@ -486,7 +484,6 @@ class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply
                         binding.rcvSelectedAttorney.visibility = View.GONE
                         binding.textNoDataFound.visibility = View.VISIBLE
                     }
-
                 }
         }
     }
@@ -541,7 +538,6 @@ class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply
         requestDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         requestDialog.show()
     }
-
 
     private fun openGallery(selectType: String,format :String ="image") {
         AlertDialog.Builder(requireContext())
