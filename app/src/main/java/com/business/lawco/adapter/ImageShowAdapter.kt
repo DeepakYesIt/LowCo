@@ -4,26 +4,22 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.R
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.getColor
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
+import com.business.lawco.R
 import com.business.lawco.databinding.ItemUploadBinding
 import java.net.URLEncoder
 
@@ -78,6 +74,7 @@ class ImageShowAdapter( var requireContext: Context , var list: MutableList<Stri
     }
 
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun downloadImage(url: String) {
         val fullScreenDialog = Dialog(requireContext, com.business.lawco.R.style.FullScreenDialog)
         fullScreenDialog.setContentView(com.business.lawco.R.layout.imagepdfalert)
@@ -87,39 +84,50 @@ class ImageShowAdapter( var requireContext: Context , var list: MutableList<Stri
         val imgDownload: ImageView = fullScreenDialog.findViewById(com.business.lawco.R.id.imgDownload)
         val img: ImageView = fullScreenDialog.findViewById(com.business.lawco.R.id.img)
         val webView: WebView = fullScreenDialog.findViewById(com.business.lawco.R.id.webView)
+        val loader: LottieAnimationView = fullScreenDialog.findViewById(com.business.lawco.R.id.loader)
         if (url.endsWith(".pdf",true) || url.endsWith(".doc",true)|| url.endsWith(".docx",true)){
             webView.visibility = View.VISIBLE
+            loader.visibility = View.VISIBLE
             img.visibility = View.GONE
-
             val settings = webView.settings
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
+            settings.allowFileAccess = true
+            settings.allowContentAccess = true
+            settings.javaScriptCanOpenWindowsAutomatically = true
+            settings.setSupportMultipleWindows(true)
+            settings.userAgentString =
+                "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36"
 
             webView.webViewClient = object : WebViewClient() {
-                override fun shouldOverrideUrlLoading(
-                    view: WebView?,
-                    request: WebResourceRequest?
-                ): Boolean {
-                    return false
+                @SuppressLint("SetTextI18n")
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+                    loader.visibility = View.GONE
                 }
             }
             val encodedUrl = URLEncoder.encode(url, "UTF-8")
-            val googleViewer = "https://docs.google.com/gview?embedded=true&url=$encodedUrl"
+            val googleViewer = "https://drive.google.com/viewerng/viewer?embedded=true&url=$url"
             webView.loadUrl(googleViewer)
-
         }else{
             webView.visibility = View.GONE
             img.visibility = View.VISIBLE
+            val progressDrawable = CircularProgressDrawable(requireContext).apply {
+                strokeWidth = 5f
+                centerRadius = 30f
+                setColorSchemeColors(getColor(requireContext, R.color.orange))
+                start()
+            }
             Glide.with(requireContext)
                 .load(url)
                 .error(com.business.lawco.R.drawable.thumbnailicon)
-                .placeholder(com.business.lawco.R.drawable.thumbnailicon)
+                .placeholder(progressDrawable)
                 .into(img)
         }
         imgDownload.setOnClickListener {
-            val request = DownloadManager.Request(Uri.parse(url))
+            val request = DownloadManager.Request(url.toUri())
                 .setTitle("Image Download")
                 .setDescription("Downloading image...")
                 .setNotificationVisibility(
@@ -140,5 +148,7 @@ class ImageShowAdapter( var requireContext: Context , var list: MutableList<Stri
         }
         fullScreenDialog.show()
     }
+
+
 
 }

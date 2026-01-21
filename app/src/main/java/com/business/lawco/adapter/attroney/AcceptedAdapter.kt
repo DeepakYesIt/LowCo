@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,6 +19,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import androidx.navigation.findNavController
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.business.lawco.utility.OnItemSelectListener
 import kotlinx.coroutines.CoroutineScope
 
@@ -34,7 +36,7 @@ class AcceptedAdapter(
         fun bind(acceptedItem: RequestData, requireActivity: FragmentActivity) {
 
             if (acceptedItem.name!=null){
-                binding.tvConsumerName.text = acceptedItem.name
+                binding.tvConsumerName.text = acceptedItem.name?:"".replaceFirstChar { it.uppercase() }
             }
 
           //  val dateAndTime = giveDateAndTime(acceptedItem.updated_at)
@@ -47,14 +49,19 @@ class AcceptedAdapter(
             binding.tvDistance.text = ValidationData.formatDistance(distanceValue)
           //  binding.tvDistance.text =  ValidationData.formatDistance(acceptedItem.distance.toDouble())
 
-            if (acceptedItem.profile_picture_url!=null){
-                Glide.with(requireActivity)
-                    .load(/*AppConstant.BASE_URL + */acceptedItem.profile_picture_url)
-                    .placeholder(R.drawable.demo_user)
-                    .into(binding.tvProfile)
-            }else{
-                binding.tvProfile.setImageResource(R.drawable.demo_user)
+
+            val progressDrawable = CircularProgressDrawable(requireActivity).apply {
+                strokeWidth = 5f
+                centerRadius = 30f
+                setColorSchemeColors(getColor(requireActivity, R.color.orange))
+                start()
             }
+
+            Glide.with(requireActivity)
+                .load(/*AppConstant.BASE_URL + */acceptedItem.profile_picture_url)
+                .placeholder(progressDrawable)
+                .error(R.drawable.demo_user)
+                .into(binding.tvProfile)
 
         }
 

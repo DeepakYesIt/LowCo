@@ -658,7 +658,11 @@ class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply
         } else {
             latitude to longitude
         }
-        getAllAttorneyList(lat, lng, emptyList(), practice)
+        if (practice.isNotEmpty()){
+            getAllAttorneyList(lat, lng, emptyList(), practice)
+        }else{
+            getAllAttorneyList(lat, lng, emptyList(), areaOfPracticeList)
+        }
     }
 
 

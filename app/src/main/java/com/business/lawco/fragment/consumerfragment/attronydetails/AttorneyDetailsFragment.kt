@@ -160,10 +160,21 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
         attorneyDetail =  Gson().fromJson(arrayListJson, type)
 
         Log.e("Attorney Detail",attorneyDetail.toString())
+        Log.e("full_name Detail", attorneyDetail?.full_name
+            ?.trim()
+            ?.replaceFirstChar { it.uppercase() }
+            ?: "")
 
         attorneyId = attorneyDetail?.id.toString()
-        binding.tvAttorneyName.text = attorneyDetail?.full_name
-        binding.tvAreaOfWork.text = attorneyDetail?.area_of_practice
+
+
+        binding.tvAttorneyName.text =  attorneyDetail?.full_name
+            ?.trim()
+            ?.replaceFirstChar { it.uppercase() }
+            ?: ""
+
+        binding.tvAreaOfWork.text = attorneyDetail?.area_of_practice +" Attorney"
+
         binding.tvLocation.text =attorneyDetail?.address
         if (attorneyDetail?.distance != null){ binding.tvDistance.text = ValidationData.formatDistance(attorneyDetail?.distance!!.toDouble()) }
         binding.tvAbout.text = attorneyDetail?.about

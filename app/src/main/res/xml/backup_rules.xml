@@ -5,9 +5,14 @@
    Note: This file is ignored for devices older that API 31
    See https://developer.android.com/about/versions/12/backup-restore
 -->
-<full-backup-content>
-    <!--
+<!--<full-backup-content>
+    &lt;!&ndash;
    <include domain="sharedpref" path="."/>
    <exclude domain="sharedpref" path="device.xml"/>
--->
+&ndash;&gt;
+</full-backup-content>-->
+
+<full-backup-content>
+    <exclude domain="file" path="cache/" />
+    <exclude domain="file" path="logs/" />
 </full-backup-content>

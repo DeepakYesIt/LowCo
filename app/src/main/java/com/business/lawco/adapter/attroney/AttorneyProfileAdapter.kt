@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.business.lawco.R
 import com.business.lawco.model.AttorneyProfile
@@ -18,7 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 class AttorneyProfileAdapter(
     private var profileList: MutableList<Data>,
-    private val context: Context
+    private var context: Context
 ) : RecyclerView.Adapter<AttorneyProfileAdapter.ViewHolder>() {
 
     private var onClaimProfile: OnClaimProfile? = null
@@ -46,20 +48,25 @@ class AttorneyProfileAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val profile = profileList[position]
 
-        holder.tvAttorneyName.text = profile.full_name?:""
+        holder.tvAttorneyName.text = profile.full_name?:"".replaceFirstChar { it.uppercase() }
         holder.tvAttorneyType.text = profile.area_of_practice?:""
         holder.tvLocation.text = profile.address?:""
 
-        // Load profile image
-        if (profile.profile_picture != null) {
-            Glide.with(context)
-                .load(profile.profile_picture)
-                .placeholder(R.drawable.empty_profile_icon)
-                .error(R.drawable.empty_profile_icon)
-                .into(holder.ivProfileImage)
-        } else {
-            holder.ivProfileImage.setImageResource(R.drawable.empty_profile_icon)
+
+        val progressDrawable = CircularProgressDrawable(context).apply {
+            strokeWidth = 5f
+            centerRadius = 30f
+            setColorSchemeColors(getColor(context, R.color.orange))
+            start()
         }
+
+
+        Glide.with(context)
+            .load(profile.profile_picture)
+            .placeholder(progressDrawable)
+            .error(R.drawable.empty_profile_icon)
+            .into(holder.ivProfileImage)
+
 
         // Handle claim status
         if (profile.is_claimed==1) {

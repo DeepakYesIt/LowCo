@@ -5,6 +5,11 @@ class AppConstant {
     companion object{
         const val SIGN_UP: String = "signUp"
         const val BASE_URL ="https://lawco.tgastaging.com/"
+        const val STRIP_PUBLIC_KEY="pk_test_acKpK0YoCJsVT2S0DidjyJRj"
+        const val PERSONA_ID_KEY="itmpl_DugoJS4atuYWdNtjZCPpYGVEmgBR"
+
+
+
         const val ATTORNEY="Attorney"
         const val HOME="Attorney"
         const val CONNECTED ="Connected"
@@ -19,14 +24,11 @@ class AppConstant {
         const val ADDRESS_ID="addressId"
         const val LATITUDE="latitude"
         const val LONGITUDE="longitude"
-        const val STRIP_PUBLIC_KEY="pk_test_acKpK0YoCJsVT2S0DidjyJRj"
-
         const val SETTING = "Setting"
         const val SUBCRIPTION = "Subcription"
         const val SOURCE_FRAGMENT = "SourceFragment"
         const val SUBCRIPTION_ID = "SubcriptionID"
         const val SUBCRIPTION_PRICE = "Price"
-
         const val AREA_OF_PRACTICE_LIST = "areaOfPractice"
         const val ADDRESS_LIST = "address"
         const val FILTER_PAGE_NAME = "filterPageName"

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ import com.business.lawco.model.consumer.AttorneyProfile
 import com.business.lawco.utility.AppConstant
 import com.business.lawco.utility.ValidationData
 import androidx.navigation.findNavController
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 
 class AttorneyListAdapter(
     private var attorneyList: List<AttorneyProfile>,
@@ -40,13 +42,14 @@ class AttorneyListAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(dataItem: AttorneyProfile, requireContext: Context) {
 
-            binding.btOpenProfile.setOnClickListener {
+            binding.root.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putString(AppConstant.ATTORNEY_PROFILE, Gson().toJson(dataItem))
                 it.findNavController().navigate(R.id.action_consumerHomeFragment_to_attorneyDetailsFragment, bundle)
             }
 
-            binding.tvAttorneyName.text = dataItem.full_name
+            binding.tvAttorneyName.text = dataItem.full_name.replaceFirstChar { it.uppercase() }
+
             binding.tvTypeofAttorney.text = dataItem.area_of_practice+" Attorney"
 
             if (dataItem.distance != null) {
@@ -59,19 +62,19 @@ class AttorneyListAdapter(
                 binding.showActive.visibility = View.INVISIBLE
             }
 
-            if (dataItem.profile_picture_url!=null){
-                Glide.with(requireContext)
-                    .load(dataItem.profile_picture_url)
-                    .error(R.drawable.demo_user)
-                    .placeholder(R.drawable.demo_user)
-                    .into(binding.ImageAttorney)
-            }else{
-                Glide.with(requireContext)
-                    .load(R.drawable.demo_user)
-                    .error(R.drawable.demo_user)
-                    .placeholder(R.drawable.demo_user)
-                    .into(binding.ImageAttorney)
+            val progressDrawable = CircularProgressDrawable(requireContext).apply {
+                strokeWidth = 5f
+                centerRadius = 30f
+                setColorSchemeColors(getColor(requireContext, R.color.orange))
+                start()
             }
+            Glide.with(requireContext)
+                .load(dataItem.profile_picture_url)
+                .placeholder(progressDrawable)
+                .error(R.drawable.demo_user)
+                .fallback(R.drawable.demo_user)
+                .into(binding.tvProfile)
+
         }
     }
 

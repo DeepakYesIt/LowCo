@@ -33,14 +33,15 @@ import com.business.lawco.model.SubcriptionData
 import com.business.lawco.model.SubscriptionsModel
 import com.business.lawco.networkModel.paymentManagement.PaymentManagementViewModel
 import com.business.lawco.utility.AppConstant
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @AndroidEntryPoint
 class SubscriptionsFragment : BaseFragment(), View.OnClickListener {
-    lateinit var binding: FragmentSubscriptionsBinding
 
+    lateinit var binding: FragmentSubscriptionsBinding
     private var subcriptionList: ArrayList<SubcriptionData> = arrayListOf()
     private lateinit var paymentViewModel: PaymentManagementViewModel
     lateinit var sessionManager: SessionManager
@@ -69,17 +70,6 @@ class SubscriptionsFragment : BaseFragment(), View.OnClickListener {
         sessionManager = SessionManager(requireContext())
         paymentViewModel = ViewModelProvider(this)[PaymentManagementViewModel::class.java]
         binding.paymentManagementViewModel = paymentViewModel
-
-        getSubscriptionList()
-
-//        val callback: OnBackPressedCallback =
-//            object : OnBackPressedCallback(true) {
-//                override fun handleOnBackPressed() {
-//                    findNavController().navigate(R.id.action_subscriptionsFragment_to_settingsFragment)
-//                }
-//            }
-//
-//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
 
         binding.viewpager.apply {
@@ -136,13 +126,13 @@ class SubscriptionsFragment : BaseFragment(), View.OnClickListener {
 
         }
 
+
     }
 
     override fun onClick(item: View?) {
 
         when (item!!.id) {
             R.id.arrowWhite -> {
-//                findNavController().navigate(R.id.action_subscriptionsFragment_to_settingsFragment)
                 findNavController().navigateUp()
             }
 
@@ -156,11 +146,6 @@ class SubscriptionsFragment : BaseFragment(), View.OnClickListener {
                     return
                 }
                 openLogoutInBrowser(requireContext())
-                /*val bundle = Bundle()
-                bundle.putString(AppConstant.SOURCE_FRAGMENT, AppConstant.SUBCRIPTION)
-                bundle.putString(AppConstant.SUBCRIPTION_ID, subcriptionId)
-                bundle.putString(AppConstant.SUBCRIPTION_PRICE, price)
-                findNavController().navigate(R.id.action_subscriptionsFragment_to_paymentFragment, bundle)*/
             }
 
         }
@@ -205,7 +190,14 @@ class SubscriptionsFragment : BaseFragment(), View.OnClickListener {
                         binding.viewpager.adapter = subscriptionAdapter
                         binding.viewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
                         subscriptionAdapter.updateList(subcriptionList)
+                        /* 🔥 TabLayout Indicator attach */
+                        TabLayoutMediator(
+                            binding.tabLayoutIndicator,
+                            binding.viewpager
+                        ) { tab, position ->
 
+                            tab.text = ""
+                        }.attach()
                     } catch (e: Exception) {
                         sessionManager.alertErrorDialog(e.message.toString())
                     }

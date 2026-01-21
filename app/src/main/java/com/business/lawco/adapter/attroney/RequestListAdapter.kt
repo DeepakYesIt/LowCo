@@ -2,8 +2,10 @@ package com.business.lawco.adapter.attroney
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.business.lawco.R
 import com.business.lawco.databinding.CreditsItemBinding
@@ -26,7 +28,8 @@ class RequestListAdapter(var datalist :  List<RequestData>, val requireActivity:
 
        fun bind(dataItem: RequestData, requireActivity: FragmentActivity) {
 
-           binding.tvConsumerName.text = dataItem.name
+           binding.tvConsumerName.text = dataItem.name?:"".replaceFirstChar { it.uppercase() }
+
 //           binding.tvDistance.text = ValidationData.formatDistance(dataItem.distance.toDouble())
            val distanceValue = dataItem.distance?.toDoubleOrNull() ?: 0.0
            binding.tvDistance.text = ValidationData.formatDistance(distanceValue)
@@ -36,15 +39,18 @@ class RequestListAdapter(var datalist :  List<RequestData>, val requireActivity:
                binding.tvNeed.text = "Looking For "+dataItem.attorney_area_of_practice+ " Attorney"
            }
 
-           if (dataItem.profile_picture_url!=null){
-               Glide.with(requireActivity)
-                   .load(/*AppConstant.BASE_URL + */dataItem.profile_picture_url)
-                   .placeholder(R.drawable.demo_user)
-                   .into(binding.tvProfile)
-           }else{
-               binding.tvProfile.setImageResource(R.drawable.demo_user)
+           val progressDrawable = CircularProgressDrawable(requireActivity).apply {
+               strokeWidth = 5f
+               centerRadius = 30f
+               setColorSchemeColors(getColor(requireActivity, R.color.orange))
+               start()
            }
 
+           Glide.with(requireActivity)
+               .load(/*AppConstant.BASE_URL + */dataItem.profile_picture_url)
+               .placeholder(progressDrawable)
+               .error(R.drawable.demo_user)
+               .into(binding.tvProfile)
 
        }
 

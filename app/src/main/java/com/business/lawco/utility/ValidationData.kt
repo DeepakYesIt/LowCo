@@ -56,8 +56,7 @@ object ValidationData {
      fun getAddress(contaxt:Context,lat: Double, longi: Double): List<Address?>? {
         var addresses: List<Address?>? = null
         try {
-            val geocoder: Geocoder
-            geocoder = Geocoder(contaxt, Locale.getDefault())
+            val geocoder = Geocoder(contaxt, Locale.getDefault())
             addresses = geocoder.getFromLocation(lat, longi, 1)
             // Here 1 represent max location result to returned, by documents it recommended 1 to 5
         } catch (ex: Exception) {

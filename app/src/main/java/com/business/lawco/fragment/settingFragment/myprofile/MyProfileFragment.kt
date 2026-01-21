@@ -70,6 +70,7 @@ class MyProfileFragment : BaseFragment(), View.OnClickListener {
     private var registrationBy: String? = null
     private var imageFile: File? = null
     private var imageurl: String=""
+
     var lat = "0.0"
     var lng = "0.0"
     private var tAGProfile = "MyProfileFragment"

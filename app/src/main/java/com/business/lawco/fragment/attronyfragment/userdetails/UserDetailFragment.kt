@@ -50,22 +50,37 @@ class UserDetailFragment : Fragment()  {
         val arrayListJson = requireArguments().getString(AppConstant.CONSUMER_PROFILE)
         val type = object : TypeToken<RequestData>() {}.type
         val consumerDetail: RequestData =  Gson().fromJson(arrayListJson, type)
-        binding.tvConsumerName.text = consumerDetail.name
+
+        binding.tvConsumerName.text =
+            consumerDetail.name
+                ?.trim()
+                ?.replaceFirstChar { it.uppercase() }
+                ?: ""
+
+
         binding.tvConsumerPhone.text = consumerDetail.phone
+
         binding.tvConsumerEmail.text = consumerDetail.email
+
         val distanceValue = consumerDetail.distance?.toDoubleOrNull() ?: 0.0
+
         binding.tvConsumerDistance.text = ValidationData.formatDistance(distanceValue)
+
         if (consumerDetail.attorney_area_of_practice!=null) {
             binding.tvConsmerNeed.text = "Looking For "+consumerDetail.attorney_area_of_practice+ " Attorney"
         }
+
         binding.tvConsumerAddress.text = consumerDetail.address
+
         Glide.with(requireActivity())
             .load(consumerDetail.profile_picture_url)
             .placeholder(R.drawable.demo_user)
             .into(binding.tvConsumerProfile)
+
         binding.arrowWhite.setOnClickListener {
             findNavController().navigate(R.id.action_userDetailFragment_to_logFragment)
         }
+
         binding.btnRequest.setOnClickListener {
             showView(consumerDetail)
         }
@@ -85,6 +100,7 @@ class UserDetailFragment : Fragment()  {
         val tvUpload: TextView = requestDialog.findViewById(R.id.tvUpload)
         val btnCancel: TextView = requestDialog.findViewById(R.id.Cancel)
         val tvInfo: TextView = requestDialog.findViewById(R.id.tvInfo)
+        val tvDownload: TextView = requestDialog.findViewById(R.id.tvDownload)
         val rcyData: RecyclerView = requestDialog.findViewById(R.id.rcyData)
         val imgUpload: ImageView = requestDialog.findViewById(R.id.imgUpload)
         val imgClose: ImageView = requestDialog.findViewById(R.id.imgClose)
@@ -96,6 +112,7 @@ class UserDetailFragment : Fragment()  {
         tvInfo.visibility = View.GONE
         btnShow.visibility = View.GONE
         tvUpload.visibility = View.VISIBLE
+        tvDownload.visibility = View.VISIBLE
         etCardNumber.isEnabled = false
         etSubject.isEnabled = false
 

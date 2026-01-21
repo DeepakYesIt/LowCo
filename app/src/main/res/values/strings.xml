@@ -98,6 +98,12 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
     <string name="if_you_continue_to_experience_issues_please_contact_support_for_assistance"><![CDATA[If you continue to experience issues, please contact support for assistance.]]></string>
     <string name="notifications">Notifications</string>
     <string name="my_transactions">My Transactions</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="terms_amp_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="logout">Logout</string>
+    <string name="pay_as_you_go">Pay as you go</string>
 
 
 </resources>

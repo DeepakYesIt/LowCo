@@ -11,7 +11,7 @@ data class AttorneyProfile(
     val connected: Int,
     var request: Int,
     var declined: Int,
-    val profile_picture_url :String,
+    val profile_picture_url :String?,
     val full_name: String,
     val address: String,
     val phone: Long,

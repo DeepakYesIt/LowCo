@@ -45,7 +45,6 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
         <ScrollView
             android:id="@+id/scView"
@@ -73,7 +72,6 @@
                     android:drawablePadding="@dimen/_5sdp"
                     android:drawableEnd="@drawable/orange_right_vector" />
                 <View
-                    android:id="@+id/profileLine"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
                     android:layout_marginTop="@dimen/_5sdp"
@@ -91,7 +89,6 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14ssp" />
                 <View
-                    android:id="@+id/AboutLine"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
                     android:layout_marginTop="@dimen/_5sdp"
@@ -109,7 +106,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14ssp" />
                 <View
-                    android:id="@+id/SubscriptionLine"
+                    android:id="@+id/viewSubscription"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
                     android:layout_marginTop="@dimen/_5sdp"
@@ -122,17 +119,18 @@
                     android:fontFamily="@font/montserrat"
                     android:text="Payment Methods"
                     android:gravity="center|start"
+                    android:visibility="gone"
                     android:drawablePadding="@dimen/_5sdp"
                     android:drawableEnd="@drawable/orange_right_vector"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14ssp" />
                 <View
-                    android:id="@+id/PaymentLine"
+                    android:id="@+id/viewPayment"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@color/line" />
-
 
                 <TextView
                     android:id="@+id/TransactionsCl"
@@ -146,18 +144,12 @@
                     android:drawableEnd="@drawable/orange_right_vector"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14ssp" />
-
-
-
                 <View
-                    android:id="@+id/TransactionsLine"
+                    android:id="@+id/viewTransactions"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@color/line" />
-
-
-
                 <TextView
                     android:id="@+id/NotificationsCl"
                     android:layout_width="match_parent"
@@ -171,274 +163,105 @@
                     android:textSize="@dimen/_14ssp"
                     android:drawableEnd="@drawable/orange_right_vector" />
 
-
-
                 <View
-                    android:id="@+id/NotificationsLine"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@color/line"
                     />
 
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <TextView
                     android:id="@+id/ContactCl"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/NotificationsCl">
-
-                    <TextView
-                        android:id="@+id/ContactCl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-                        android:fontFamily="@font/montserrat"
-                        android:text="Contact Us"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_14ssp"
-                        app:layout_constraintEnd_toStartOf="@+id/arrowRightContact"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:fontFamily="@font/montserrat"
+                    android:text="@string/contact_us"
+                    android:textColor="@color/black"
+                    android:gravity="center|start"
+                    android:drawablePadding="@dimen/_5sdp"
+                    android:textSize="@dimen/_14ssp"
+                    app:drawableEndCompat="@drawable/orange_right_vector" />
 
 
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/arrowRightContact"
-                        android:layout_width="@dimen/_13sdp"
-                        android:layout_height="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/line"
+                    />
 
-                        android:layout_marginEnd="@dimen/_35sdp"
-                        android:src="@drawable/orange_right_vector"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:id="@+id/ContactLine"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_1sdp"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_20sdp"
-                        android:background="@color/line"
-                        app:layout_constraintTop_toBottomOf="@id/Contact" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <TextView
                     android:id="@+id/PrivacyCl"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/ContactCl">
-
-                    <TextView
-                        android:id="@+id/Privacy"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-                        android:fontFamily="@font/montserrat"
-                        android:text="Privacy Policy"
-                        android:textColor="@color/black"
-
-                        android:textSize="@dimen/_14ssp"
-                        app:layout_constraintEnd_toStartOf="@+id/arrowRightPrivacy"
-
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/arrowRightPrivacy"
-                        android:layout_width="@dimen/_13sdp"
-                        android:layout_height="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-
-                        android:layout_marginEnd="@dimen/_35sdp"
-                        android:src="@drawable/orange_right_vector"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:id="@+id/PrivacyLine"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_1sdp"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_20sdp"
-                        android:background="@color/line"
-                        app:layout_constraintTop_toBottomOf="@id/Privacy" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:fontFamily="@font/montserrat"
+                    android:text="@string/privacy_policy"
+                    android:textColor="@color/black"
+                    android:gravity="center|start"
+                    android:drawablePadding="@dimen/_5sdp"
+                    android:textSize="@dimen/_14ssp"
+                    app:drawableEndCompat="@drawable/orange_right_vector"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/line" />
+                <TextView
                     android:id="@+id/TermsCl"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/PrivacyCl">
-
-                    <TextView
-                        android:id="@+id/Terms"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-                        android:fontFamily="@font/montserrat"
-                        android:text="Terms &amp; Conditions"
-                        android:textColor="@color/black"
-
-                        android:textSize="@dimen/_14ssp"
-                        app:layout_constraintEnd_toStartOf="@+id/arrowRightTerms"
-
-
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/arrowRightTerms"
-                        android:layout_width="@dimen/_13sdp"
-                        android:layout_height="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-
-                        android:layout_marginEnd="@dimen/_35sdp"
-                        android:src="@drawable/orange_right_vector"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:id="@+id/TermsLine"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_1sdp"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_20sdp"
-                        android:background="@color/line"
-                        app:layout_constraintTop_toBottomOf="@id/Terms" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:fontFamily="@font/montserrat"
+                    android:text="@string/terms_amp_conditions"
+                    android:textColor="@color/black"
+                    android:gravity="center|start"
+                    android:drawablePadding="@dimen/_5sdp"
+                    android:textSize="@dimen/_14ssp"
+                    app:drawableEndCompat="@drawable/orange_right_vector"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/line" />
+                <TextView
                     android:id="@+id/DeleteCl"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/TermsCl">
-
-
-                    <TextView
-                        android:id="@+id/Delete"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-                        android:fontFamily="@font/montserrat"
-                        android:text="Delete Account"
-                        android:textColor="@color/black"
-
-                        android:textSize="@dimen/_14ssp"
-                        app:layout_constraintEnd_toStartOf="@+id/arrowRightDelete"
-
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/arrowRightDelete"
-                        android:layout_width="@dimen/_13sdp"
-                        android:layout_height="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-
-                        android:layout_marginEnd="@dimen/_35sdp"
-                        android:src="@drawable/orange_right_vector"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:id="@+id/DeleteLine"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_1sdp"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_20sdp"
-                        android:background="@color/line"
-                        app:layout_constraintTop_toBottomOf="@id/Delete" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:fontFamily="@font/montserrat"
+                    android:text="@string/delete_account"
+                    android:textColor="@color/black"
+                    android:gravity="center|start"
+                    android:drawablePadding="@dimen/_5sdp"
+                    android:textSize="@dimen/_14ssp"
+                    app:drawableEndCompat="@drawable/orange_right_vector" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/line"
+                    />
+                <TextView
                     android:id="@+id/LogoutCl"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_100sdp"
-
-                    app:layout_constraintTop_toBottomOf="@id/DeleteCl">
-
-
-                    <TextView
-                        android:id="@+id/Logout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-                        android:fontFamily="@font/montserrat"
-                        android:text="Logout"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_14ssp"
-                        app:layout_constraintEnd_toStartOf="@+id/arrowRightLogout"
-
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/arrowRightLogout"
-                        android:layout_width="@dimen/_13sdp"
-                        android:layout_height="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_15sdp"
-
-                        android:layout_marginEnd="@dimen/_35sdp"
-                        android:src="@drawable/orange_right_vector"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:id="@+id/Logoutline"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_1sdp"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_20sdp"
-                        android:background="@color/line"
-                        app:layout_constraintTop_toBottomOf="@id/Logout" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:fontFamily="@font/montserrat"
+                    android:text="@string/logout"
+                    android:gravity="center|start"
+                    android:drawablePadding="@dimen/_5sdp"
+                    android:drawableEnd="@drawable/orange_right_vector"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14ssp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/line" />
             </LinearLayout>
-
         </ScrollView>
-
-<!--        <com.agrawalsuneet.dotsloader.loaders.CircularDotsLoader-->
-<!--            android:id="@+id/tvProgressBar"-->
-<!--            android:layout_width="@dimen/_50sdp"-->
-<!--            android:layout_height="@dimen/_50sdp"-->
-<!--            android:elevation="@dimen/_10sdp"-->
-<!--            android:visibility="@{commonViewModel.isLoading?View.VISIBLE:View.GONE,default = gone}"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintLeft_toLeftOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:loader_animDur="80"-->
-<!--            app:loader_bigCircleRadius="25dp"-->
-<!--            app:loader_circleRadius="@dimen/_5sdp"-->
-<!--            app:loader_defaultColor="@color/grey"-->
-<!--            app:loader_firstShadowColor="@color/grey"-->
-<!--            app:loader_secondShadowColor="@color/grey"-->
-<!--            app:loader_selectedColor="@color/red"-->
-<!--            app:loader_showRunningShadow="true"-->
-<!--            tools:ignore="MissingClass" />-->
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

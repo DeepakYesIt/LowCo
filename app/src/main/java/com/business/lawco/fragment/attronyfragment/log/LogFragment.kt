@@ -104,7 +104,7 @@ class LogFragment : BaseFragment(), View.OnClickListener, OnItemSelectListener {
         binding.arrowWhite.setOnClickListener(this)
 
         binding.logRefresh.setOnRefreshListener {
-          getCredits()
+            locationData()
         }
 
         if (sessionManager.getSelectType().equals("Requested")){
@@ -138,7 +138,7 @@ class LogFragment : BaseFragment(), View.OnClickListener, OnItemSelectListener {
     }
 
 
-    private fun getCredits() {
+    private fun getCredits(position: Int?, status: String?, type: String?) {
         lifecycleScope.launch {
             homeScreenViewModel.getCredit().observe(viewLifecycleOwner) { jsonObject ->
                 val jsonObjectData = sessionManager.checkResponseHidemessage(jsonObject)
@@ -148,11 +148,20 @@ class LogFragment : BaseFragment(), View.OnClickListener, OnItemSelectListener {
                     } catch (e: Exception) {
                         lead="0"
                         Log.d("@Error","***"+e.message)
+                    } finally {
+                        if (lead.toInt() > 0) {
+                            showView(position,status,type)
+                        } else {
+                            sessionManager.alertSubscriptionDialog(getString(R.string.leadError)){
+                                findNavController().navigate(
+                                    R.id.action_logFragment_to_subscriptionsFragment
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
-        locationData()
     }
 
     private fun selectDataType(selectType: String){
@@ -186,7 +195,7 @@ class LogFragment : BaseFragment(), View.OnClickListener, OnItemSelectListener {
         if (!sessionManager.isNetworkAvailable()) {
             sessionManager.alertErrorDialog(getString(R.string.no_internet))
         } else {
-            getCredits()
+            locationData()
         }
 
 
@@ -385,7 +394,13 @@ class LogFragment : BaseFragment(), View.OnClickListener, OnItemSelectListener {
     }
 
     override fun itemSelect(position: Int?, status: String?, type: String?) {
-        showView(position,status,type)
+        if (!sessionManager.getSelectType().equals("Requested")){
+            showView(position,status,type)
+        }else{
+            getCredits(position,status,type)
+        }
+
+
     }
 
     @SuppressLint("SetTextI18n")

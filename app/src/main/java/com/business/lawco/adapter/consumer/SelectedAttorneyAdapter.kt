@@ -18,6 +18,7 @@ import com.business.lawco.model.consumer.AttorneyProfile
 import com.business.lawco.utility.AppConstant
 import com.business.lawco.utility.ValidationData
 import androidx.navigation.findNavController
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 
 class SelectedAttorneyAdapter(
     private var selectedAttorneyList: List<AttorneyProfile>,
@@ -39,7 +40,7 @@ class SelectedAttorneyAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(dataItem: AttorneyProfile, requireContext: Context) {
 
-            binding.btViewProfile.setOnClickListener {
+            binding.root.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putString(AppConstant.ATTORNEY_PROFILE, Gson().toJson(dataItem))
                 it.findNavController().navigate(R.id.action_selectedAttorneyFragment_to_attorneyDetailsFragment, bundle)
@@ -53,8 +54,10 @@ class SelectedAttorneyAdapter(
             }
 
 
-            binding.tvAttorneyName.text = dataItem.full_name
+            binding.tvAttorneyName.text = dataItem.full_name.replaceFirstChar { it.uppercase() }
+
             binding.tvTypeofAttorney.text = dataItem.area_of_practice+" Attorneys"
+
             binding.tvAddress.text = dataItem.address
 
             if (dataItem.distance != null) {
@@ -62,9 +65,18 @@ class SelectedAttorneyAdapter(
                     ValidationData.formatDistance(dataItem.distance.toDouble())
             }
 
+
+            val progressDrawable = CircularProgressDrawable(requireContext).apply {
+                strokeWidth = 5f
+                centerRadius = 30f
+                setColorSchemeColors(getColor(requireContext, R.color.orange))
+                start()
+            }
+
             Glide.with(requireContext)
                 .load(AppConstant.BASE_URL + dataItem.profile_picture_url)
-                .placeholder(R.drawable.demo_user)
+                .placeholder(progressDrawable)
+                .error(R.drawable.demo_user)
                 .into(binding.tvProfile)
         }
 

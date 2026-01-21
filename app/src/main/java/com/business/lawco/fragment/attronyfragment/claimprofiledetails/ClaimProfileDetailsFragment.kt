@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.toString
 import androidx.core.view.isVisible
+import com.business.lawco.utility.AppConstant
 
 
 class ClaimProfileDetailsFragment : BaseFragment() {
@@ -88,7 +89,7 @@ class ClaimProfileDetailsFragment : BaseFragment() {
                 }
 
                 selected.full_name?.let { name->
-                    binding.etName.setText(name)
+                    binding.etName.setText(name.replaceFirstChar { it.uppercase() })
                 }
 
                 selected.email?.let { email->
@@ -268,17 +269,13 @@ class ClaimProfileDetailsFragment : BaseFragment() {
     }
 
     private fun launchVerifyIdentity(){
-//        val TEMPLATE_ID = "itmpl_yEu1QvFA5fJ1zZ9RbUo1yroGahx2"
-        val TEMPLATE_ID = "itmpl_DugoJS4atuYWdNtjZCPpYGVEmgBR"
-        val inquiry = Inquiry.fromTemplate(TEMPLATE_ID)
-            .environment(Environment.SANDBOX) // Use Environment.PRODUCTION for live verification
-            .referenceId(userID) // Link the inquiry to a specific user
+        val inquiry = Inquiry.fromTemplate(AppConstant.PERSONA_ID_KEY)
+            .environment(Environment.SANDBOX)
+            .referenceId(userID)
             .fields(Fields.Builder().build())
             .locale(Locale.getDefault().language)
             .build()
-
         getInquiryResult.launch(inquiry)
-
     }
 
     @SuppressLint("UseKtx")

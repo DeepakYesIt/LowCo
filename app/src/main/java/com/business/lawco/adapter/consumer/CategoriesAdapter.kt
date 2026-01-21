@@ -5,8 +5,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getColor
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.business.lawco.R
 import com.business.lawco.databinding.CatogeriesItemBinding
@@ -17,9 +19,19 @@ class CategoriesAdapter(var categoryList: ArrayList<AreaOfPractice>, var require
     RecyclerView.Adapter<CategoriesAdapter.Holder>() {
     class Holder(val binding: CatogeriesItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dataItem: AreaOfPractice ,  requireContext: Context) {
+
+
+            val progressDrawable = CircularProgressDrawable(requireContext).apply {
+                strokeWidth = 5f
+                centerRadius = 30f
+                setColorSchemeColors(getColor(requireContext, R.color.orange))
+                start()
+            }
+
             Glide.with(requireContext)
                 .load(AppConstant.BASE_URL + dataItem.category_image)
-                .placeholder(R.drawable.adoption_credit_card)
+                .placeholder(progressDrawable)
+                .error(R.drawable.adoption_credit_card)
                 .into(binding.ImageCatogeries)
 
             binding.tvCategoryName.text = dataItem.category_name

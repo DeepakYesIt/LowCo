@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -211,6 +210,9 @@ class SettingsFragment : BaseFragment(), View.OnClickListener {
             TermsCl.isVisible = true
             DeleteCl.isVisible = true
             LogoutCl.isVisible = true
+            viewPayment.isVisible = false
+            viewSubscription.isVisible = false
+            viewTransactions.isVisible = false
         }
     }
 

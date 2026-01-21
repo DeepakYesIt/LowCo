@@ -5,8 +5,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.business.lawco.R
 import com.business.lawco.databinding.ConnectionsListBinding
@@ -28,15 +30,23 @@ class ConnectionAdapter(private var connectionList: List<ConnectionsDataModel>, 
                 it.findNavController().navigate(R.id.action_connectionsFragment_to_attorneyDetailsFragment, bundle)
             }
             if (dataItem.profile_picture_url!=null){
+                val progressDrawable = CircularProgressDrawable(requireContext).apply {
+                    strokeWidth = 5f
+                    centerRadius = 30f
+                    setColorSchemeColors(
+                        ContextCompat.getColor(requireContext, R.color.orange)
+                    )
+                    start()
+                }
                 Glide.with(requireContext)
                     .load(/*AppConstant.BASE_URL + */dataItem.profile_picture_url)
-                    .placeholder(R.drawable.demo_user)
+                    .placeholder(progressDrawable)
                     .into(binding.tvProfile)
             }else{
                 binding.tvProfile.setImageResource(R.drawable.demo_user)
             }
             if (dataItem.full_name!=null){
-                binding.tvAttorneyName.text = dataItem.full_name
+                binding.tvAttorneyName.text = dataItem.full_name.replaceFirstChar { it.uppercase() }
             }
             if (dataItem.area_of_practice!=null) {
                 binding.tvTypeofAttorney.text = dataItem.area_of_practice+" Attorney"

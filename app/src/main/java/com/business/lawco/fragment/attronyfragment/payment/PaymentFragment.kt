@@ -13,7 +13,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -139,9 +138,9 @@ class PaymentFragment : BaseFragment(), View.OnClickListener {
                     var year = 0
                     try {
                         month = expire.split("/".toRegex()).dropLastWhile { it.isEmpty() }
-                            .toTypedArray().get(0).toInt()
+                            .toTypedArray()[0].toInt()
                         year = expire.split("/".toRegex()).dropLastWhile { it.isEmpty() }
-                            .toTypedArray().get(1).toInt()
+                            .toTypedArray()[1].toInt()
                     } catch (e: java.lang.Exception) {
                         e.printStackTrace()
                     }
@@ -199,7 +198,7 @@ class PaymentFragment : BaseFragment(), View.OnClickListener {
             }
 
             R.id.btPayNow -> {
-                var selectCardPosition: Int? = null
+               /* var selectCardPosition: Int? = 0
                 savedCardList.forEachIndexed { index, dataItem ->
                     if (dataItem.selectCard) {
                         selectCardPosition = index
@@ -208,15 +207,15 @@ class PaymentFragment : BaseFragment(), View.OnClickListener {
 
                 if (selectCardPosition != null) {
                     bottomSheetPayment(
-                        savedCardList[selectCardPosition!!].customer_id,
-                        savedCardList[selectCardPosition!!].cardholdername,
-                        savedCardList[selectCardPosition!!].last4,
-                        savedCardList[selectCardPosition!!].exp_month,
-                        savedCardList[selectCardPosition!!].exp_year,
+                        savedCardList[selectCardPosition].customer_id,
+                        savedCardList[selectCardPosition].cardholdername,
+                        savedCardList[selectCardPosition].last4,
+                        savedCardList[selectCardPosition].exp_month,
+                        savedCardList[selectCardPosition].exp_year,
                     )
                 } else {
                     sessionManager.alertErrorDialog("Please Select A Card !")
-                }
+                }*/
             }
         }
     }
@@ -355,9 +354,9 @@ class PaymentFragment : BaseFragment(), View.OnClickListener {
                 var year = 0
                 try {
                     month = expire.split("/".toRegex()).dropLastWhile { it.isEmpty() }
-                        .toTypedArray().get(0).toInt()
+                        .toTypedArray()[0].toInt()
                     year = expire.split("/".toRegex()).dropLastWhile { it.isEmpty() }
-                        .toTypedArray().get(1).toInt()
+                        .toTypedArray()[1].toInt()
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
                 }
@@ -549,8 +548,6 @@ class PaymentFragment : BaseFragment(), View.OnClickListener {
                     }
                 }
         }
-
-
     }
 
     // This function is used for display payment successfully done dialog

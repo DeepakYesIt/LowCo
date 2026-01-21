@@ -178,7 +178,16 @@ class AttorneyHomeFragment : BaseFragment(), View.OnClickListener, HomeSelectAdd
                 if (jsonObjectData != null) {
                     try {
                         val data = jsonObjectData.getAsJsonObject("data")
-                        binding.tvUserName.text = if (!data.get("name").isJsonNull) data.get("name").asString else null
+                        binding.tvUserName.text =
+                            if (!data.get("name").isJsonNull)
+                                data.get("name").asString
+                                    .trim()
+                                    .replaceFirstChar { ch ->
+                                        if (ch.isLowerCase()) ch.titlecase() else ch.toString()
+                                    }
+                            else
+                                ""
+
                     } catch (e: Exception) {
                         Log.d("@Error","***"+e.message)
                     }
@@ -333,7 +342,13 @@ class AttorneyHomeFragment : BaseFragment(), View.OnClickListener, HomeSelectAdd
                                 adapterRequestList.setOnRequestAction(object :
                                     RequestListAdapter.OnRequestAction {
                                     override fun onRequestAction(position: Int, requestId: String, action: String) {
-                                        showView(position,requestId,action)
+                                        if (binding.tvCredits.text.toString().toInt() > 0) {
+                                            showView(position,requestId,action)
+                                        } else {
+                                            sessionManager.alertSubscriptionDialog(getString(R.string.leadError)){
+                                                findNavController().navigate(R.id.action_attronyHomeFragment_to_subscriptionsFragment)
+                                            }
+                                        }
                                     }
                                 })
                                 binding.textNoDataFound.visibility = View.GONE
