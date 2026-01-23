@@ -47,7 +47,7 @@
                 android:id="@+id/tvAttorneyName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Devon M. Thurtle Anderson"
+                android:text=""
                 android:fontFamily="@font/montserrat_semibold"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_10ssp"
@@ -58,7 +58,7 @@
                 android:id="@+id/tvAttorneyType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Adoption Attorney"
+                android:text=""
                 android:fontFamily="@font/lexend_deca"
                 android:textColor="#424242"
                 android:textSize="@dimen/_11ssp"
@@ -72,24 +72,17 @@
                 android:layout_marginTop="@dimen/_7sdp"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:id="@+id/imageLocationIcon"
-                    android:layout_width="@dimen/_14sdp"
-                    android:layout_height="@dimen/_14sdp"
-                    android:src="@drawable/location_red"
-                    app:tint="#231F39" />
-
                 <TextView
                     android:id="@+id/tvLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Seattle, WA"
+                    android:text=""
                     android:layout_marginBottom="@dimen/_3sdp"
-                    android:layout_toEndOf="@+id/imageLocationIcon"
+                    android:drawableStart="@drawable/location_red"
+                    android:drawablePadding="@dimen/_5sdp"
                     android:fontFamily="@font/lexend_deca"
                     android:textColor="#424242"
-                    android:textSize="@dimen/_10ssp"
-                    android:layout_marginStart="@dimen/_4sdp" />
+                    android:textSize="@dimen/_10ssp" />
 
             </RelativeLayout>
 

@@ -63,49 +63,13 @@ class OnBoardingActivity : AppCompatActivity(),View.OnClickListener {
     private fun getOnBoardingData(userType: String?): ArrayList<OnBordingModel> {
         val data: ArrayList<OnBordingModel> = ArrayList()
         if (userType == AppConstant.ATTORNEY) {
-            data.add(
-                OnBordingModel(
-                    R.drawable.discover_attorney,
-                    "Expand Your Practice",
-                    getString(R.string.attorneyOnboarding1)
-                )
-            )
-            data.add(
-                OnBordingModel(
-                    R.drawable.skills_vector,
-                    "Showcase Your Skills",
-                    getString(R.string.attorneyOnboarding2)
-                )
-            )
-            data.add(
-                OnBordingModel(
-                    R.drawable.management_attorney,
-                    "Effortless Management",
-                    getString(R.string.attorneyOnboarding3)
-                )
-            )
+            data.add(OnBordingModel(R.drawable.discover_attorney, "Expand Your Practice", getString(R.string.attorneyOnboarding1)))
+            data.add(OnBordingModel(R.drawable.skills_vector, "Showcase Your Skills", getString(R.string.attorneyOnboarding2)))
+            data.add(OnBordingModel(R.drawable.management_attorney, "Effortless Management", getString(R.string.attorneyOnboarding3)))
         } else if (userType == AppConstant.CONSUMER) {
-            data.add(
-                OnBordingModel(
-                    R.drawable.discover_attorney,
-                    "Discover Attorneys",
-                    getString(R.string.consumerOnboarding1)
-                )
-            )
-            data.add(
-                OnBordingModel(
-                    R.drawable.legal_expert,
-                    getString(R.string.Choose_Your_Legal_Expert),
-                    getString(R.string.consumerOnboarding2)
-                )
-            )
-            data.add(
-                OnBordingModel(
-                    R.drawable.management,
-                    "Confident Connections",
-                    getString(R.string.consumerOnboarding3)
-                )
-            )
+            data.add(OnBordingModel(R.drawable.discover_attorney, "Discover Attorneys", getString(R.string.consumerOnboarding1)))
+            data.add(OnBordingModel(R.drawable.legal_expert, getString(R.string.Choose_Your_Legal_Expert), getString(R.string.consumerOnboarding2)))
+            data.add(OnBordingModel(R.drawable.management, "Confident Connections", getString(R.string.consumerOnboarding3)))
         }
         return data
 

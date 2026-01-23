@@ -14,8 +14,6 @@ class OnBoarding( var dataList: ArrayList<OnBordingModel>) : RecyclerView.Adapte
             binding.tvItem.text = textList.tvItem
             binding.tvTitle.text = textList.tvTitle
             binding.ivItem.setImageResource(textList.ivItem)
-
-
         }
 
     }

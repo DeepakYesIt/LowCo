@@ -58,6 +58,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import androidx.core.view.isVisible
 
 @AndroidEntryPoint
 class MyProfileFragment : BaseFragment(), View.OnClickListener {
@@ -619,6 +620,7 @@ class MyProfileFragment : BaseFragment(), View.OnClickListener {
     }
 
     // This function is used for check validation
+    @SuppressLint("UseKtx")
     private fun checkValidation(): Boolean {
         if (binding.etName.text.isEmpty()) {
             sessionManager.alertErrorDialog(getString(R.string.fill_name))
@@ -626,7 +628,7 @@ class MyProfileFragment : BaseFragment(), View.OnClickListener {
             sessionManager.alertErrorDialog(getString(R.string.fill_email))
         } else if (!ValidationData.emailValidate(binding.etEmail.text.toString())) {
             sessionManager.alertErrorDialog(getString(R.string.fill_valid_email))
-        } else if (binding.emailVerifyClick.visibility == View.VISIBLE) {
+        } else if (binding.emailVerifyClick.isVisible) {
             sessionManager.alertErrorDialog(getString(R.string.email_verify))
         } else if (binding.etPhone.text.isEmpty()) {
             sessionManager.alertErrorDialog(getString(R.string.fill_phone))

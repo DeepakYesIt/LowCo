@@ -8,10 +8,6 @@
             name="homeScreenViewModel"
             type="com.business.lawco.networkModel.homeScreen.attorney.AttorneyHomeScreenViewModel" />
     </data>
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/homeRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -77,6 +73,10 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </RelativeLayout>
             </LinearLayout>
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/homeRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -88,7 +88,6 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_110sdp"
-                        android:scaleType="centerCrop"
                         android:layout_marginHorizontal="@dimen/_8sdp"
                         android:layout_marginTop="@dimen/_10sdp"
                         android:src="@drawable/poster" />
@@ -215,6 +214,6 @@
                     </RelativeLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </LinearLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

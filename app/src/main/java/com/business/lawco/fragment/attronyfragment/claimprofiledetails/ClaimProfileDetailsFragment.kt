@@ -71,6 +71,7 @@ class ClaimProfileDetailsFragment : BaseFragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -89,7 +90,8 @@ class ClaimProfileDetailsFragment : BaseFragment() {
                 }
 
                 selected.full_name?.let { name->
-                    binding.etName.setText(name.replaceFirstChar { it.uppercase() })
+                    binding.etName.setText(
+                        name.trim().replaceFirstChar { it.uppercase() })
                 }
 
                 selected.email?.let { email->

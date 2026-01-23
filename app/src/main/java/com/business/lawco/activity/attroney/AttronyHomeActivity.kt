@@ -20,8 +20,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.business.lawco.AppContextProvider
-import com.business.lawco.AuthEventManager
-import com.business.lawco.AuthObserverHelper
 import com.business.lawco.R
 import com.business.lawco.SessionManager
 import com.business.lawco.databinding.ActivityHomeBinding
@@ -64,9 +62,8 @@ class AttronyHomeActivity : AppCompatActivity() ,View.OnClickListener{
         binding.navigationSettings.setOnClickListener(this)
         binding.navigationProfile.setOnClickListener(this)
         window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
-//        AuthObserverHelper.observeAuthEvents(this, AuthEventManager.authRequired)
+//      AuthObserverHelper.observeAuthEvents(this, AuthEventManager.authRequired)
         observeSessionExpiration()
-
         // Register receiver
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_NOT_EXPORTED)
@@ -135,6 +132,7 @@ class AttronyHomeActivity : AppCompatActivity() ,View.OnClickListener{
         binding.imageSettings.setImageResource(R.drawable.setting_bottom)
         binding.imageProfile.setImageResource(R.drawable.profile_bottom)
     }
+
     fun attronyFooter(status: Boolean){
         if (status){
             binding.lay1.visibility= View.VISIBLE

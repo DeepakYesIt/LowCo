@@ -4,9 +4,13 @@ import android.app.Activity
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.business.lawco.R
+import com.business.lawco.SessionManager
 import com.business.lawco.databinding.NotificationItemsBinding
 import com.business.lawco.model.NotificationData
 import java.time.Instant
@@ -21,21 +25,36 @@ class NotificationAdapter(private var notificationList: ArrayList<NotificationDa
     class  Holder(val binding : NotificationItemsBinding):RecyclerView.ViewHolder(binding.root){
 
 
-        fun bind(dataItem: NotificationData ,  requireContext : Activity) {
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun bind(dataItem: NotificationData, requireContext : Activity) {
+
+            val progressDrawable = CircularProgressDrawable(requireContext).apply {
+                strokeWidth = 5f
+                centerRadius = 30f
+                setColorSchemeColors(getColor(requireContext, R.color.orange))
+                start()
+            }
 
             Glide.with(requireContext)
                 .load(dataItem.profile_picture)
-                .placeholder(R.drawable.demo_user)
+                .placeholder(progressDrawable)
+                .error(R.drawable.demo_user)
                 .into(binding.profilePic)
+
             binding.message.text = dataItem.message
-            if (dataItem.formatted_date!=null &&
-                dataItem.formatted_time!=null) {
+
+            dataItem.created_at?.let { date->
+                binding.daysAgo.text = SessionManager(requireContext).formatDateTimeSafe(date)
+            }
+
+
+            /*if (dataItem.formatted_date!=null && dataItem.formatted_time!=null) {
                 if (dataItem.formatted_date.equals("0 days ago")){
-                    binding.daysAgo.text = "Today "+dataItem.formatted_time//calculateTimeDifference(dataItem.created_at)
+                    binding.daysAgo.text = "Today "+(dataItem.formatted_time?:"")//calculateTimeDifference(dataItem.created_at)
                 }else{
                     binding.daysAgo.text = dataItem.formatted_time+" "+dataItem.formatted_time//calculateTimeDifference(dataItem.created_at)
                 }
-            }
+            }*/
 
         }
 

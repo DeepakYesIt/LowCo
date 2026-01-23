@@ -5,47 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
+    android:gravity="center"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/_330sdp"
-        android:layout_marginTop="@dimen/_35sdp">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/ivItem"
-            android:layout_width="@dimen/_125sdp"
-            android:layout_height="@dimen/_125sdp"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_120sdp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/_18sdp"
-            android:scaleType="fitXY"
-            android:src="@drawable/legal_expert" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/discover_attorney" />
 
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/tvItem"
             android:layout_below="@+id/ivItem"
+            android:layout_marginTop="@dimen/_30ssp"
             android:layout_gravity="center_horizontal"
             android:fontFamily="@font/montserrat_semibold"
             android:gravity="center"
             android:text="@string/choose_your_legal_expert"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="@dimen/_22ssp" />
+            android:textSize="@dimen/_20ssp" />
 
         <TextView
             android:id="@+id/tvItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:layout_marginBottom="@dimen/_40sdp"
             android:fontFamily="@font/lexend_deca"
             android:gravity="center"
+            android:layout_marginTop="@dimen/_30ssp"
+            android:layout_below="@id/tvTitle"
             android:text="@string/attorneyOnboarding1"
             android:textAlignment="center"
             android:textColor="@color/white"

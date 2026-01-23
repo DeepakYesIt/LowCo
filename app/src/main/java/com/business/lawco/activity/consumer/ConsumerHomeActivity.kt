@@ -14,6 +14,9 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.business.lawco.R
@@ -64,9 +67,9 @@ class ConsumerHomeActivity : AppCompatActivity(), View.OnClickListener {
         binding.csnavigationconnection.setOnClickListener(this)
         binding.csnavigationSettings.setOnClickListener(this)
         binding.csnavigationProfile.setOnClickListener(this)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
-        }
+        window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
+
+
 //        AuthObserverHelper.observeAuthEvents(this, AuthEventManager.authRequired)
         observeSessionExpiration()
 
@@ -83,6 +86,7 @@ class ConsumerHomeActivity : AppCompatActivity(), View.OnClickListener {
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
             )
         }
+
 
 
     }

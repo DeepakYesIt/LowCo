@@ -25,6 +25,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.business.lawco.activity.IdentityActivity
@@ -34,6 +35,11 @@ import java.io.IOException
 import java.util.Locale
 import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.NavController
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class SessionManager(var context: Context) {
 
@@ -457,6 +463,42 @@ class SessionManager(var context: Context) {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatDateTimeSafe(input: String?): String {
+
+        if (input.isNullOrBlank()) return ""
+
+        return try {
+            val instant = Instant.parse(input)
+            val zoneId = ZoneId.systemDefault()
+            val dateTime = instant.atZone(zoneId)
+            val now = ZonedDateTime.now(zoneId)
+
+            val daysDiff = ChronoUnit.DAYS.between(
+                dateTime.toLocalDate(),
+                now.toLocalDate()
+            )
+
+            val timeFormatter =
+                DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH)
+
+            val dateTimeFormatter =
+                DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a", Locale.ENGLISH)
+
+            when (daysDiff) {
+                in 1..3 ->
+                    "$daysDiff days ago ${dateTime.format(timeFormatter)}"
+
+                0L ->
+                    "Today ${dateTime.format(timeFormatter)}"
+
+                else -> dateTime.format(dateTimeFormatter)
+            }
+
+        } catch (e: Exception) {
+            ""
+        }
+    }
 
     fun searchableAlertDialog(searchList: List<String>, etAreaOfPractice: TextView)  {
 

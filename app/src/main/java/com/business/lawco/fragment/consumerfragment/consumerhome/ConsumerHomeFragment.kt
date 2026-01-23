@@ -326,6 +326,7 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
     }
 
     private fun handleNewLocation(){
+        showMe()
         if (!sessionManager.getUserLat().isEmpty() && !sessionManager.getUserLng().isEmpty()){
             if (!sessionManager.getUserCurrent()){
                 latitude = sessionManager.getUserLat()
@@ -476,7 +477,6 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
 
     @SuppressLint("NotifyDataSetChanged")
     private fun getAllAttorneyList(latitude: String, longitude: String, location:List<String>,practice: List<String>) {
-        showMe()
         lifecycleScope.launch {
             consumerHomeScreenViewModel.getAllAttorneyList("0", latitude, longitude,practice).observe(viewLifecycleOwner) { jsonObject ->
                     binding.consumerHomeRefresh.isRefreshing = false
@@ -686,7 +686,8 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
         binding.EtSearch.text.clear()
         lifecycleScope.launch {
             consumerHomeScreenViewModel.getAreaOfPractice().observe(viewLifecycleOwner) {
-                jsonObject -> dismissMe()
+                jsonObject ->
+                dismissMe()
                     binding.consumerHomeRefresh.isRefreshing = false
                         try {
                             val categoryList = Gson().fromJson(jsonObject.response, CategoryModel::class.java)
@@ -716,6 +717,7 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
         id.let {
             selectId= id
         }
+        showMe()
         if (!address.isEmpty()) {
             getAllAttorneyList(address[0].latitude, address[0].longitude, listOf(), practice)
         }else{

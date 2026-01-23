@@ -47,11 +47,11 @@ class ImageShowAdapter( var requireContext: Context , var list: MutableList<Stri
 
         if (item.endsWith(".pdf",true) || item.endsWith(".doc",true)|| item.endsWith(".docx",true)){
             val fileIcon = when {
-                item.lowercase().endsWith(".pdf") -> com.business.lawco.R.drawable.pdficon
+                item.lowercase().endsWith(".pdf") -> R.drawable.pdficon
                 item.lowercase().endsWith(".doc") || item.lowercase().endsWith(".docx") ->
-                    com.business.lawco.R.drawable.docicon
+                    R.drawable.docicon
                 else ->
-                    com.business.lawco.R.drawable.docicon
+                    R.drawable.docicon
             }
             Glide.with(requireContext)
                 .load(fileIcon)
@@ -59,10 +59,16 @@ class ImageShowAdapter( var requireContext: Context , var list: MutableList<Stri
                 .error(fileIcon)
                 .into(holder.binding.imageData)
         }else{
+            val progressDrawable = CircularProgressDrawable(requireContext).apply {
+                strokeWidth = 5f
+                centerRadius = 30f
+                setColorSchemeColors(getColor(requireContext, R.color.orange))
+                start()
+            }
             Glide.with(requireContext)
                 .load(item)
-                .error(com.business.lawco.R.drawable.thumbnailicon)
-                .placeholder(com.business.lawco.R.drawable.thumbnailicon)
+                .error(R.drawable.thumbnailicon)
+                .placeholder(progressDrawable)
                 .into(holder.binding.imageData)
         }
 

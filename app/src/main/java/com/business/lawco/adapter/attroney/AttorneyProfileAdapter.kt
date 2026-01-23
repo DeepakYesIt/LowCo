@@ -48,7 +48,11 @@ class AttorneyProfileAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val profile = profileList[position]
 
-        holder.tvAttorneyName.text = profile.full_name?:"".replaceFirstChar { it.uppercase() }
+        holder.tvAttorneyName.text =profile.full_name
+            ?.trim()
+            ?.replaceFirstChar { it.uppercase() }
+            ?: ""
+
         holder.tvAttorneyType.text = profile.area_of_practice?:""
         holder.tvLocation.text = profile.address?:""
 
