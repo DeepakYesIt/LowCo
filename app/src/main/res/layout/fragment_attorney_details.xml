@@ -82,7 +82,7 @@
                                 android:layout_width="@dimen/_85sdp"
                                 android:layout_height="@dimen/_95sdp"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/pic1" />
+                                android:src="@drawable/demo_user" />
 
                         </androidx.cardview.widget.CardView>
                     </RelativeLayout>
@@ -314,7 +314,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#ADFFFFFF" />
-
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <LinearLayout
@@ -608,15 +607,15 @@
                             app:layout_constraintTop_toBottomOf="@id/message">
 
                             <ImageView
-                                android:layout_width="@dimen/_12sdp"
-                                android:layout_height="@dimen/_12sdp"
+                                android:layout_width="@dimen/_15sdp"
+                                android:layout_height="@dimen/_15sdp"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="@dimen/_4sdp"
                                 android:src="@drawable/location_on" />
 
                             <TextView
                                 android:id="@+id/tvAddress"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="@dimen/_6sdp"

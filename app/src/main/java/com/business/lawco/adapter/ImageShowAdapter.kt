@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
+import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
@@ -82,8 +85,13 @@ class ImageShowAdapter( var requireContext: Context , var list: MutableList<Stri
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun downloadImage(url: String) {
-        val fullScreenDialog = Dialog(requireContext, com.business.lawco.R.style.FullScreenDialog)
-        fullScreenDialog.setContentView(com.business.lawco.R.layout.imagepdfalert)
+        Log.d("openLogoutInBrowser", url)
+        val customTabsIntent = CustomTabsIntent.Builder()
+            .setShowTitle(true)
+            .build()
+        customTabsIntent.launchUrl(requireContext, url.toUri())
+        /*val fullScreenDialog = Dialog(requireContext, com.business.lawco.R.style.FullScreenDialog)
+        fullScreenDialog.setContentView(R.layout.imagepdfalert)
         fullScreenDialog.setCancelable(true)
         fullScreenDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         val arrowWhite: ImageView = fullScreenDialog.findViewById(com.business.lawco.R.id.arrowWhite)
@@ -152,7 +160,7 @@ class ImageShowAdapter( var requireContext: Context , var list: MutableList<Stri
         arrowWhite.setOnClickListener {
             fullScreenDialog.dismiss()
         }
-        fullScreenDialog.show()
+        fullScreenDialog.show()*/
     }
 
 

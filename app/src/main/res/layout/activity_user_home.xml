@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".activity.consumer.ConsumerHomeActivity">
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentUserContainerView_ConsumerMain"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -16,8 +16,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/lay1"/>
-
-
     <LinearLayout
         android:id="@+id/lay1"
         android:layout_width="match_parent"
@@ -157,8 +155,4 @@
         </RelativeLayout>
 
     </LinearLayout>
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

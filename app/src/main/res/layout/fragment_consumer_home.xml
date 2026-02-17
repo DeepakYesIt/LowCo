@@ -15,6 +15,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
         android:layout_height="match_parent"
         tools:context=".fragment.consumerfragment.consumerhome.ConsumerHomeFragment">
         <androidx.cardview.widget.CardView
@@ -58,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/dark_blue_bg"
-            android:paddingTop="@dimen/_3sdp"
+            android:paddingTop="@dimen/_5sdp"
             android:paddingBottom="@dimen/_3sdp"
             app:layout_constraintTop_toTopOf="parent">
             <RelativeLayout

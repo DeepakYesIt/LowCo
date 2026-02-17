@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_13sdp"
-        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_10sdp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/tvConsumerName"

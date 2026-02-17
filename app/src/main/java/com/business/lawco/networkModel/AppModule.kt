@@ -27,15 +27,12 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.business.lawco.BuildConfig
+import com.business.lawco.utility.AppConstant
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    private const val BASE_URL =  "https://lawco.tgastaging.com/api/"
-    private const val PYAMENT_BASE_URL =  "https://lawco.tgastaging.com/"
-
 
     @Singleton
     @Provides
@@ -70,7 +67,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRetrofitBuilder(): Retrofit.Builder = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(AppConstant.API_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
 
 

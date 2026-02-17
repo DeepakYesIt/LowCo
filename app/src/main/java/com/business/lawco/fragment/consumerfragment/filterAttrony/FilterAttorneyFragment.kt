@@ -590,11 +590,31 @@ class FilterAttorneyFragment : BaseFragment(), View.OnClickListener, FilterApply
                     if (jsonObjectData != null) {
                         requestDialog.dismiss()
                         try {
+                            val dataObject = jsonObjectData.getAsJsonObject("data")
                             if (action.toInt() == 0) {
                                 attorneyList[position].request = 0
                             } else {
                                 attorneyList[position].request = 1
                             }
+                            attorneyList[position].subject =
+                                if (dataObject != null && dataObject.has("subject") && !dataObject.get("subject").isJsonNull)
+                                    dataObject.get("subject").asString
+                                else
+                                    null
+                            attorneyList[position].description =
+                                if (dataObject != null && dataObject.has("description") && !dataObject.get("description").isJsonNull)
+                                    dataObject.get("description").asString
+                                else
+                                    null
+                            val documentsList = mutableListOf<String>()
+                            if (dataObject != null && dataObject.has("documents") && dataObject.get("documents").isJsonArray) {
+                                dataObject.getAsJsonArray("documents").forEach {
+                                    if (!it.isJsonNull) {
+                                        documentsList.add(it.asString)
+                                    }
+                                }
+                            }
+                            attorneyList[position].documents = documentsList
                             adapterSelectedAttorney.notifyItemChanged(position)
                             alertSend()
                         } catch (e: Exception) {

@@ -1,11 +1,13 @@
 package com.business.lawco.fragment.settingFragment.termscondition
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -103,6 +105,7 @@ class TermAndConditionFragment : BaseFragment(), View.OnClickListener {
     }
 
     // This function is used for get Term and Condition for database
+    @SuppressLint("SetJavaScriptEnabled")
     private fun getTermAndCondition() {
         showMe()
         lifecycleScope.launch {
@@ -114,11 +117,29 @@ class TermAndConditionFragment : BaseFragment(), View.OnClickListener {
                     val jsonObjectData = sessionManager.checkResponse(jsonObject)
                     if (jsonObjectData != null) {
                         try {
-                            val spanned = Html.fromHtml(
+                          /*  val spanned = Html.fromHtml(
                                 jsonObjectData["content"].asString,
                                 Html.FROM_HTML_MODE_LEGACY
                             )
-                            binding.termAndConditionText.text = spanned
+                            binding.termAndConditionText.text = spanned*/
+                            jsonObjectData.get("content")?.asString
+                                ?.takeIf { it.isNotBlank() }
+                                ?.let { htmlContent ->
+
+                                    binding.webView.apply {
+                                        settings.javaScriptEnabled = true
+                                        settings.domStorageEnabled = true
+                                        webViewClient = WebViewClient()
+
+                                        loadDataWithBaseURL(
+                                            null,
+                                            htmlContent,
+                                            "text/html",
+                                            "UTF-8",
+                                            null
+                                        )
+                                    }
+                                }
                         } catch (e: Exception) {
                             Log.d("@Error","***"+e.message)
                         }

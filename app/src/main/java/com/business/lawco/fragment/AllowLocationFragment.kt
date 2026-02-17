@@ -64,11 +64,16 @@ class AllowLocationFragment : Fragment(R.layout.fragment_allow_location), View.O
     override fun onClick(item: View?) {
         when (item!!.id) {
             R.id.btnLocation -> {
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    findNavController().navigate(R.id.action_allowLocationFragment_to_allowNotificationsFragment)
+                } else {
+                    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 100)
+                }
+               /* if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 } else {
                     findNavController().navigate(R.id.action_allowLocationFragment_to_allowNotificationsFragment)
-                }
+                }*/
             }
 
             R.id.textNotnow1 -> {
@@ -141,7 +146,6 @@ class AllowLocationFragment : Fragment(R.layout.fragment_allow_location), View.O
             }
         }
     }
-
 
     private fun getCurrentLocation() {
         // Initialize Location manager

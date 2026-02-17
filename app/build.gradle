@@ -10,7 +10,6 @@ plugins {
 android {
     namespace 'com.business.lawco'
     compileSdk 35
-
     defaultConfig {
         applicationId "com.business.lawco"
         minSdk 24
@@ -19,14 +18,12 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -34,7 +31,6 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-
     buildFeatures {
         viewBinding = true
         dataBinding =  true
@@ -116,9 +112,6 @@ dependencies {
     //Image picker
     implementation 'com.github.dhaval2404:imagepicker:2.1'
 
-
-
-
     //glide
     implementation 'com.github.bumptech.glide:glide:4.14.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
@@ -136,5 +129,6 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2" // or latest
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+
 
 }

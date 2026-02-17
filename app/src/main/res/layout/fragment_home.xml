@@ -19,6 +19,7 @@
                 android:layout_height="@dimen/_47sdp"
                 android:background="@drawable/dark_blue_bg"
                 android:gravity="center"
+                android:fitsSystemWindows="true"
                 android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="parent">
                 <RelativeLayout

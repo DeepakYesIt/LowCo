@@ -149,6 +149,7 @@ class AttorneyDetailsFragment : BaseFragment() , OnMapReadyCallback , View.OnCli
 
     @SuppressLint("SetTextI18n")
     private fun initView() {
+
         sessionManager = SessionManager(requireContext())
         consumerHomeScreenViewModel = ViewModelProvider(this)[ConsumerHomeScreenViewModel::class.java]
         binding.consumerHomeScreenViewModel = consumerHomeScreenViewModel

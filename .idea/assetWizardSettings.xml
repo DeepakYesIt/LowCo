@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/C:/Users/YES%20IT%20Labs/AppData/Local/Android/Sdk/icons/material/materialicons/download/baseline_download_24.xml" />
+                                      <entry key="url" value="file:/C:/Users/YES%20IT%20Labs/AppData/Local/Android/Sdk/icons/material/materialicons/check_box_outline_blank/baseline_check_box_outline_blank_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -29,8 +29,8 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="baseline_download_24" />
-                            <entry key="sourceFile" value="C:\Users\YES IT Labs\Downloads\solar_user-check-broken.svg" />
+                            <entry key="outputName" value="unselect_box" />
+                            <entry key="sourceFile" value="C:\Users\YES IT Labs\Downloads\Group 239916.svg" />
                           </map>
                         </option>
                       </PersistentState>

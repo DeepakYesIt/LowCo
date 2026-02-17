@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -43,15 +44,6 @@ class AboutUsFragment : BaseFragment() ,View.OnClickListener{
         commonViewModel = ViewModelProvider(this)[CommonViewModel::class.java]
         binding.commonViewModel = commonViewModel
 
-//        val callback: OnBackPressedCallback =
-//            object : OnBackPressedCallback(true) {
-//                override fun handleOnBackPressed() {
-//                    findNavController().navigate(R.id.action_aboutUsFragment_to_settingsFragment)
-//                }
-//            }
-//
-//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-
 
         binding.arrowWhite.setOnClickListener(this)
 
@@ -86,6 +78,7 @@ class AboutUsFragment : BaseFragment() ,View.OnClickListener{
     }
 
     // This function is used for get About Us for database
+    @SuppressLint("SetJavaScriptEnabled")
     private fun getAboutUs() {
         showMe()
         lifecycleScope.launch {
@@ -97,8 +90,26 @@ class AboutUsFragment : BaseFragment() ,View.OnClickListener{
 
                     if (jsonObjectData != null){
                         try {
-                            val spanned = Html.fromHtml(jsonObjectData["content"].asString, Html.FROM_HTML_MODE_LEGACY)
-                            binding.aboutUsText.text = spanned
+                            jsonObjectData.get("content")?.asString
+                                ?.takeIf { it.isNotBlank() }
+                                ?.let { htmlContent ->
+
+                                    binding.webView.apply {
+                                        settings.javaScriptEnabled = true
+                                        settings.domStorageEnabled = true
+                                        webViewClient = WebViewClient()
+
+                                        loadDataWithBaseURL(
+                                            null,
+                                            htmlContent,
+                                            "text/html",
+                                            "UTF-8",
+                                            null
+                                        )
+                                    }
+                                }
+
+
                         }catch (e:Exception){
                             Log.d("@Error","***"+e.message)
                         }

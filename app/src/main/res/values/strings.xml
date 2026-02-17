@@ -64,7 +64,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
     <string name="fill_valid_phone">Please enter the valid phone number</string>
     <string name="fill_password">Password field can\'t be empty!</string>
     <!--    <string name="password_validation_text">Please include that at least 1 uppercase also should be there and min 8 characters</string>-->
-    <string name="password_validation_text">Enter atleast 1 number, 1 alphabet and 1 special character.</string>
+    <string name="password_validation_text">The password should be a minimum eight characters long and should at Enter at least 1 number, 1 alphabet and 1 special character.</string>
     <!--    <string name="password_validation_text">Enter atLeast 1 number, 1 alphabet and 1 special character..</string>-->
     <string name="fill_message">Message field can\'t be empty!</string>
     <string name="accept_term_condition">"Please accept the terms and condition"</string>

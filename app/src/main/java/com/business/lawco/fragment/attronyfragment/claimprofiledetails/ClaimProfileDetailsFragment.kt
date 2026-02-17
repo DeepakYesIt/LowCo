@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -54,6 +55,10 @@ class ClaimProfileDetailsFragment : BaseFragment() {
         getInquiryResult = registerForActivityResult(Inquiry.Contract()) { result ->
             when (result) {
                 is InquiryResponse.Complete -> {
+                    result.collectedData
+                    Log.d("result","****"+result.fields)
+                    Log.d("result","****"+result.inquiryId)
+                    Log.d("result","****"+result.collectedData)
                     // User identity verification completed successfully
                      verifyUser()
                 }
@@ -148,12 +153,70 @@ class ClaimProfileDetailsFragment : BaseFragment() {
             if (!sessionManager.isNetworkAvailable()) {
                 sessionManager.alertErrorDialog(getString(R.string.no_internet))
             } else {
+
                 if (isValidation()){
-                      launchVerifyIdentity()
+//                      launchVerifyIdentity()
+                    documentVerifyAlert()
                  }
             }
         }
 
+    }
+
+
+    private fun documentVerifyAlert(){
+        val requestDialog = Dialog(requireContext())
+        requestDialog.setContentView(R.layout.document_upload_dialog)
+        requestDialog.setCancelable(false)
+        requestDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val btnYes: TextView = requestDialog.findViewById(R.id.yes)
+        val btnCancel: TextView = requestDialog.findViewById(R.id.Cancel)
+        val imgClose: ImageView = requestDialog.findViewById(R.id.imgClose)
+        val layDocument: TextView = requestDialog.findViewById(R.id.layDocument)
+        val layWithOutDocument: TextView = requestDialog.findViewById(R.id.layWithOutDocument)
+        var selectType="withOutDocument"
+        layDocument.setOnClickListener {
+            selectType="document"
+            layDocument.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.select_box,
+                0
+            )
+            layWithOutDocument.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.unselect_box,
+                0
+            )
+        }
+        layWithOutDocument.setOnClickListener {
+            selectType="withOutDocument"
+            layDocument.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.unselect_box,
+                0
+            )
+            layWithOutDocument.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.select_box,
+                0
+            )
+        }
+        imgClose.setOnClickListener {
+            requestDialog.dismiss()
+        }
+        btnYes.setOnClickListener {
+            requestDialog.dismiss()
+            launchVerifyIdentity(selectType)
+        }
+        btnCancel.setOnClickListener {
+            requestDialog.dismiss()
+        }
+        requestDialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        requestDialog.show()
     }
 
 
@@ -270,8 +333,14 @@ class ClaimProfileDetailsFragment : BaseFragment() {
         }
     }
 
-    private fun launchVerifyIdentity(){
-        val inquiry = Inquiry.fromTemplate(AppConstant.PERSONA_ID_KEY)
+    private fun launchVerifyIdentity(selectType: String) {
+
+        val key = if (selectType.equals("document",true)){
+            AppConstant.PERSONA_ID_KEY_DOCUMENT
+        }else{
+            AppConstant.PERSONA_ID_KEY
+        }
+        val inquiry = Inquiry.fromTemplate(key)
             .environment(Environment.SANDBOX)
             .referenceId(userID)
             .fields(Fields.Builder().build())

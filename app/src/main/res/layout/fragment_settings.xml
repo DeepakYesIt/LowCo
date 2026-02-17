@@ -68,12 +68,14 @@
                     android:fontFamily="@font/montserrat"
                     android:text="My Profile"
                     android:textColor="@color/black"
+                    android:visibility="gone"
                     android:textSize="@dimen/_14ssp"
                     android:drawablePadding="@dimen/_5sdp"
                     android:drawableEnd="@drawable/orange_right_vector" />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@color/line" />
                 <TextView

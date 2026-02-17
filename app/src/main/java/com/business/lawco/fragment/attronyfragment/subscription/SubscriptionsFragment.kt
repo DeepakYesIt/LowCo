@@ -3,19 +3,17 @@ package com.business.lawco.fragment.attronyfragment.subscription
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -23,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import com.google.gson.Gson
 import com.business.lawco.R
 import com.business.lawco.SessionManager
 import com.business.lawco.adapter.attroney.SubscriptionAdpter
@@ -34,6 +31,7 @@ import com.business.lawco.model.SubscriptionsModel
 import com.business.lawco.networkModel.paymentManagement.PaymentManagementViewModel
 import com.business.lawco.utility.AppConstant
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -119,8 +117,7 @@ class SubscriptionsFragment : BaseFragment(), View.OnClickListener {
 
             val currentPosition = binding.viewpager.currentItem
 
-            val currentSubscriptionId =
-                subcriptionList[currentPosition].id.toString()
+            val currentSubscriptionId = subcriptionList[currentPosition].id.toString()
             //subcriptionId
             cancelSubAlertBox(currentPosition,currentSubscriptionId)
 
@@ -137,28 +134,30 @@ class SubscriptionsFragment : BaseFragment(), View.OnClickListener {
             }
 
             R.id.btnBuyOrNext -> {
-                val currentPosition = binding.viewpager.currentItem
+               /* val currentPosition = binding.viewpager.currentItem
                 val activePlanPosition = getActivePlanPosition()
-
-                if (activePlanPosition != -1 && currentPosition < activePlanPosition) {
-                    Toast.makeText(requireActivity(), "Your current plan is higher than this plan",
-                        Toast.LENGTH_SHORT).show()
+                val purchaseCount=subcriptionList.count() { it.is_active }
+                if (purchaseCount >0) {
+                    Toast.makeText(requireActivity(), "Kindly cancel the previous plan and proceed with the upgrade to the latest plan.", Toast.LENGTH_SHORT).show()
                     return
-                }
+                }*/
                 openLogoutInBrowser(requireContext())
             }
-
         }
     }
 
 
     fun openLogoutInBrowser(context: Context) {
-        val logoutUrl = "https://lawco.tgastaging.com/web-payment?token="+sessionManager.getBearerToken()+"&plan_id="+subcriptionId.toString()
-        Log.d("openLogoutInBrowser",logoutUrl)
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(logoutUrl))
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
+        val logoutUrl = "${AppConstant.BASE_URL}/web-payment?token=${sessionManager.getBearerToken()}&plan_id=${subcriptionId}"
+        Log.d("openLogoutInBrowser", logoutUrl)
+        val customTabsIntent = CustomTabsIntent.Builder()
+            .setShowTitle(true)
+            .build()
+        customTabsIntent.launchUrl(context, logoutUrl.toUri())
     }
+
+
+
 
     private fun getSubscriptionList() {
         showMe()

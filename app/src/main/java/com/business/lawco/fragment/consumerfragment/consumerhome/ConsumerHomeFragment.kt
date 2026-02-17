@@ -580,6 +580,7 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
                     if (jsonObjectData != null) {
                         requestDialog.dismiss()
                         try {
+                            val dataObject = jsonObjectData.getAsJsonObject("data")
                             val index = attorneyList.indexOfFirst { it.id == attorneyId.toLong() }
                             if (action.equals("0",true)){
                                 val attorneyProfile:AttorneyProfile = attorneyList[index]
@@ -592,6 +593,25 @@ class ConsumerHomeFragment : BaseFragment(), View.OnClickListener,FilterApply, H
                                 attorneyList[index] = attorneyProfile
                                 Log.e("******","Not Connect")
                             }
+                            attorneyList[index].subject =
+                                if (dataObject != null && dataObject.has("subject") && !dataObject.get("subject").isJsonNull)
+                                    dataObject.get("subject").asString
+                                else
+                                    null
+                            attorneyList[index].description =
+                                if (dataObject != null && dataObject.has("description") && !dataObject.get("description").isJsonNull)
+                                    dataObject.get("description").asString
+                                else
+                                    null
+                            val documentsList = mutableListOf<String>()
+                            if (dataObject != null && dataObject.has("documents") && dataObject.get("documents").isJsonArray) {
+                                dataObject.getAsJsonArray("documents").forEach {
+                                    if (!it.isJsonNull) {
+                                        documentsList.add(it.asString)
+                                    }
+                                }
+                            }
+                            attorneyList[index].documents = documentsList
                             adapterAttorneyList.notifyItemChanged(position)
                             alertSend()
                         } catch (e: Exception) {
